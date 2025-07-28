@@ -1,0 +1,245 @@
+import React, { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { Container, Row, Col, Card, Button, Form, Badge, Tab, Tabs } from 'react-bootstrap'
+import { FaShoppingCart, FaStar, FaArrowLeft, FaHeart, FaShare } from 'react-icons/fa'
+import { useAppContext } from '../App.jsx'
+import { products } from '../data/products.js'
+
+const ProductDetails = () => {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { addToCart } = useAppContext()
+  const [quantity, setQuantity] = useState(1)
+  const [activeTab, setActiveTab] = useState('specifications')
+
+  const product = products.find(p => p.id === parseInt(id))
+
+  if (!product) {
+    return (
+      <Container className="py-5 text-center">
+        <h2>Product not found</h2>
+        <Button variant="primary" onClick={() => navigate('/shopping')}>
+          Back to Shopping
+        </Button>
+      </Container>
+    )
+  }
+
+  const handleAddToCart = () => {
+    addToCart(product, quantity)
+  }
+
+  const handleQuantityChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value) || 1)
+    setQuantity(value)
+  }
+
+  return (
+    <Container className="py-4">
+      {/* Breadcrumb */}
+      <Row className="mb-3">
+        <Col>
+          <Button 
+            variant="link" 
+            className="p-0 mb-2"
+            onClick={() => navigate(-1)}
+          >
+            <FaArrowLeft className="me-2" />
+            Back
+          </Button>
+        </Col>
+      </Row>
+
+      <Row>
+        {/* Product Image */}
+        <Col md={6}>
+          <Card>
+            <Card.Img 
+              variant="top" 
+              src={product.image} 
+              style={{ height: '400px', objectFit: 'cover' }}
+            />
+          </Card>
+        </Col>
+
+        {/* Product Info */}
+        <Col md={6}>
+          <div className="mb-2">
+            <Badge bg="secondary">{product.category}</Badge>
+            <Badge bg="info" className="ms-2">{product.brand}</Badge>
+          </div>
+          
+          <h1 className="mb-3">{product.name}</h1>
+          
+          <div className="mb-3">
+            {[...Array(5)].map((_, i) => (
+              <FaStar 
+                key={i} 
+                className={i < product.rating ? 'text-warning' : 'text-muted'} 
+                size={20}
+              />
+            ))}
+            <span className="ms-2 text-muted">
+              {product.rating}/5 ({product.reviews} reviews)
+            </span>
+          </div>
+
+          <h2 className="price-tag mb-4">${product.price}</h2>
+
+          <p className="mb-4">{product.description}</p>
+
+          {/* Stock Status */}
+          <div className="mb-4">
+            {product.inStock ? (
+              <Badge bg="success" className="fs-6">
+                ✓ In Stock
+              </Badge>
+            ) : (
+              <Badge bg="danger" className="fs-6">
+                ✗ Out of Stock
+              </Badge>
+            )}
+          </div>
+
+          {/* Quantity and Add to Cart */}
+          <Row className="mb-4">
+            <Col sm={4}>
+              <Form.Group>
+                <Form.Label>Quantity</Form.Label>
+                <Form.Control
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  disabled={!product.inStock}
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={8} className="d-flex align-items-end">
+              <Button
+                variant="primary"
+                size="lg"
+                disabled={!product.inStock}
+                onClick={handleAddToCart}
+                className="me-2 flex-fill"
+              >
+                <FaShoppingCart className="me-2" />
+                Add to Cart
+              </Button>
+              <Button variant="outline-secondary" size="lg">
+                <FaHeart />
+              </Button>
+              <Button variant="outline-secondary" size="lg" className="ms-2">
+                <FaShare />
+              </Button>
+            </Col>
+          </Row>
+
+          {/* Additional Info */}
+          <Card className="bg-light">
+            <Card.Body>
+              <h6>Why Buy From TechBasket?</h6>
+              <ul className="mb-0 small">
+                <li>✓ Free shipping on orders over $50</li>
+                <li>✓ 30-day return policy</li>
+                <li>✓ 2-year manufacturer warranty</li>
+                <li>✓ Expert technical support</li>
+              </ul>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Product Details Tabs */}
+      <Row className="mt-5">
+        <Col>
+          <Tabs
+            activeKey={activeTab}
+            onSelect={(k) => setActiveTab(k)}
+            className="mb-3"
+          >
+            <Tab eventKey="specifications" title="Specifications">
+              <Card>
+                <Card.Body>
+                  <Row>
+                    {Object.entries(product.specifications).map(([key, value]) => (
+                      <Col md={6} key={key} className="mb-2">
+                        <strong>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</strong>{' '}
+                        <span className="text-muted">{value}</span>
+                      </Col>
+                    ))}
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Tab>
+            
+            <Tab eventKey="reviews" title="Reviews">
+              <Card>
+                <Card.Body>
+                  <h5>Customer Reviews</h5>
+                  <div className="mb-3">
+                    <div className="d-flex align-items-center mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar 
+                          key={i} 
+                          className={i < 5 ? 'text-warning' : 'text-muted'} 
+                          size={16}
+                        />
+                      ))}
+                      <span className="ms-2">
+                        <strong>John D.</strong> - Verified Purchase
+                      </span>
+                    </div>
+                    <p className="mb-1">Excellent performance and great value for money!</p>
+                    <small className="text-muted">Posted 2 days ago</small>
+                  </div>
+                  <hr />
+                  <div className="mb-3">
+                    <div className="d-flex align-items-center mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar 
+                          key={i} 
+                          className={i < 4 ? 'text-warning' : 'text-muted'} 
+                          size={16}
+                        />
+                      ))}
+                      <span className="ms-2">
+                        <strong>Sarah M.</strong> - Verified Purchase
+                      </span>
+                    </div>
+                    <p className="mb-1">Works perfectly with my setup. Fast shipping too!</p>
+                    <small className="text-muted">Posted 1 week ago</small>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Tab>
+            
+            <Tab eventKey="shipping" title="Shipping & Returns">
+              <Card>
+                <Card.Body>
+                  <h5>Shipping Information</h5>
+                  <ul>
+                    <li>Free standard shipping on orders over $50</li>
+                    <li>Express shipping available for $9.99</li>
+                    <li>Most orders ship within 1-2 business days</li>
+                    <li>Tracking information provided via email</li>
+                  </ul>
+                  
+                  <h5 className="mt-4">Return Policy</h5>
+                  <ul>
+                    <li>30-day return window</li>
+                    <li>Items must be in original condition</li>
+                    <li>Free returns on defective items</li>
+                    <li>Return shipping fees may apply for non-defective returns</li>
+                  </ul>
+                </Card.Body>
+              </Card>
+            </Tab>
+          </Tabs>
+        </Col>
+      </Row>
+    </Container>
+  )
+}
+
+export default ProductDetails
