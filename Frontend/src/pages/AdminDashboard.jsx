@@ -1,87 +1,118 @@
-import React, { useState } from 'react'
-import { Container, Row, Col, Card, Table, Button, Form, Modal, Alert, Tab, Tabs } from 'react-bootstrap'
-import { FaUsers, FaShoppingCart, FaDollarSign, FaBox, FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
-import { useNavigate } from 'react-router-dom'
-import { useAppContext } from '../App.jsx'
-import { products as initialProducts } from '../data/products.js'
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Table,
+  Button,
+  Form,
+  Modal,
+  Alert,
+  Tab,
+  Tabs,
+} from "react-bootstrap";
+import {
+  FaUsers,
+  FaShoppingCart,
+  FaDollarSign,
+  FaBox,
+  FaPlus,
+  FaEdit,
+  FaTrash,
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../App.jsx";
+import { products as initialProducts } from "../data/products.js";
 
 const AdminDashboard = () => {
-  const { user, orders } = useAppContext()
-  const navigate = useNavigate()
-  
-  const [products, setProducts] = useState(initialProducts)
-  const [showProductModal, setShowProductModal] = useState(false)
-  const [editingProduct, setEditingProduct] = useState(null)
+  const { user, orders } = useAppContext();
+  const navigate = useNavigate();
+
+  const [products, setProducts] = useState(initialProducts);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
   const [productForm, setProductForm] = useState({
-    name: '',
-    brand: '',
-    category: '',
-    price: '',
-    description: '',
-    image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop',
-    inStock: true
-  })
+    name: "",
+    brand: "",
+    category: "",
+    price: "",
+    description: "",
+    image:
+      "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop",
+    inStock: true,
+  });
 
   // Check admin access
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return (
       <Container className="py-5 text-center">
         <h2>Access Denied</h2>
         <p>You need administrator privileges to access this page.</p>
-        <Button variant="primary" onClick={() => navigate('/')}>
+        <Button variant="primary" onClick={() => navigate("/")}>
           Go Home
         </Button>
       </Container>
-    )
+    );
   }
 
   // Calculate stats
   const totalRevenue = orders.reduce((total, order) => {
-    const orderTotal = order.totals?.total || 
-      order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-    return total + orderTotal
-  }, 0)
-  
-  const totalCustomers = new Set(orders.map(order => order.userId || order.id)).size
-  const totalOrders = orders.length
-  const totalProducts = products.length
+    const orderTotal =
+      order.totals?.total ||
+      order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return total + orderTotal;
+  }, 0);
+
+  const totalCustomers = new Set(
+    orders.map((order) => order.userId || order.id)
+  ).size;
+  const totalOrders = orders.length;
+  const totalProducts = products.length;
 
   const handleProductSubmit = (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (editingProduct) {
-      setProducts(products.map(p => 
-        p.id === editingProduct.id 
-          ? { ...editingProduct, ...productForm, price: parseFloat(productForm.price) }
-          : p
-      ))
+      setProducts(
+        products.map((p) =>
+          p.id === editingProduct.id
+            ? {
+                ...editingProduct,
+                ...productForm,
+                price: parseFloat(productForm.price),
+              }
+            : p
+        )
+      );
     } else {
       const newProduct = {
-        id: Math.max(...products.map(p => p.id)) + 1,
+        id: Math.max(...products.map((p) => p.id)) + 1,
         ...productForm,
         price: parseFloat(productForm.price),
         rating: 5,
         reviews: 0,
-        specifications: {}
-      }
-      setProducts([...products, newProduct])
+        specifications: {},
+      };
+      setProducts([...products, newProduct]);
     }
-    
-    setShowProductModal(false)
-    setEditingProduct(null)
+
+    setShowProductModal(false);
+    setEditingProduct(null);
     setProductForm({
-      name: '',
-      brand: '',
-      category: '',
-      price: '',
-      description: '',
-      image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop',
-      inStock: true
-    })
-  }
+      name: "",
+      brand: "",
+      category: "",
+      price: "",
+      description: "",
+      image:
+        "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop",
+      inStock: true,
+    });
+  };
 
   const handleEditProduct = (product) => {
-    setEditingProduct(product)
+    setEditingProduct(product);
     setProductForm({
       name: product.name,
       brand: product.brand,
@@ -89,27 +120,33 @@ const AdminDashboard = () => {
       price: product.price.toString(),
       description: product.description,
       image: product.image,
-      inStock: product.inStock
-    })
-    setShowProductModal(true)
-  }
+      inStock: product.inStock,
+    });
+    setShowProductModal(true);
+  };
 
   const handleDeleteProduct = (productId) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      setProducts(products.filter(p => p.id !== productId))
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setProducts(products.filter((p) => p.id !== productId));
     }
-  }
+  };
 
   const getOrderStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending': return 'warning'
-      case 'processing': return 'info'
-      case 'shipped': return 'primary'
-      case 'delivered': return 'success'
-      case 'cancelled': return 'danger'
-      default: return 'secondary'
+      case "pending":
+        return "warning";
+      case "processing":
+        return "info";
+      case "shipped":
+        return "primary";
+      case "delivered":
+        return "success";
+      case "cancelled":
+        return "danger";
+      default:
+        return "secondary";
     }
-  }
+  };
 
   return (
     <Container fluid className="py-4">
@@ -182,25 +219,35 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.slice(0, 10).map(order => {
-                      const orderTotal = order.totals?.total || 
-                        order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-                      
+                    {orders.slice(0, 10).map((order) => {
+                      const orderTotal =
+                        order.totals?.total ||
+                        order.items.reduce(
+                          (sum, item) => sum + item.price * item.quantity,
+                          0
+                        );
+
                       return (
                         <tr key={order.id}>
                           <td>#{order.id}</td>
                           <td>
-                            {order.billingInfo ? 
-                              `${order.billingInfo.firstName} ${order.billingInfo.lastName}` : 
-                              'Customer'
-                            }
+                            {order.billingInfo
+                              ? `${order.billingInfo.firstName} ${order.billingInfo.lastName}`
+                              : "Customer"}
                           </td>
-                          <td>{new Date(order.orderDate).toLocaleDateString()}</td>
+                          <td>
+                            {new Date(order.orderDate).toLocaleDateString()}
+                          </td>
                           <td>{order.items.length}</td>
                           <td className="fw-bold">${orderTotal.toFixed(2)}</td>
                           <td>
-                            <span className={`badge bg-${getOrderStatusColor(order.status)}`}>
-                              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            <span
+                              className={`badge bg-${getOrderStatusColor(
+                                order.status
+                              )}`}
+                            >
+                              {order.status.charAt(0).toUpperCase() +
+                                order.status.slice(1)}
                             </span>
                           </td>
                           <td>
@@ -209,7 +256,7 @@ const AdminDashboard = () => {
                             </Button>
                           </td>
                         </tr>
-                      )
+                      );
                     })}
                   </tbody>
                 </Table>
@@ -226,8 +273,8 @@ const AdminDashboard = () => {
           <Card>
             <Card.Header className="d-flex justify-content-between align-items-center">
               <h5 className="mb-0">Product Management</h5>
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 onClick={() => setShowProductModal(true)}
               >
                 <FaPlus className="me-2" />
@@ -248,13 +295,17 @@ const AdminDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map(product => (
+                  {products.map((product) => (
                     <tr key={product.id}>
                       <td>
-                        <img 
-                          src={product.image} 
+                        <img
+                          src={product.image}
                           alt={product.name}
-                          style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                          }}
                           className="rounded"
                         />
                       </td>
@@ -263,21 +314,25 @@ const AdminDashboard = () => {
                       <td>{product.category}</td>
                       <td className="fw-bold">${product.price}</td>
                       <td>
-                        <span className={`badge bg-${product.inStock ? 'success' : 'danger'}`}>
-                          {product.inStock ? 'In Stock' : 'Out of Stock'}
+                        <span
+                          className={`badge bg-${
+                            product.inStock ? "success" : "danger"
+                          }`}
+                        >
+                          {product.inStock ? "In Stock" : "Out of Stock"}
                         </span>
                       </td>
                       <td>
-                        <Button 
-                          variant="outline-primary" 
-                          size="sm" 
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
                           className="me-2"
                           onClick={() => handleEditProduct(product)}
                         >
                           <FaEdit />
                         </Button>
-                        <Button 
-                          variant="outline-danger" 
+                        <Button
+                          variant="outline-danger"
                           size="sm"
                           onClick={() => handleDeleteProduct(product.id)}
                         >
@@ -294,11 +349,15 @@ const AdminDashboard = () => {
       </Tabs>
 
       {/* Product Modal */}
-      <Modal show={showProductModal} onHide={() => setShowProductModal(false)} size="lg">
+      <Modal
+        show={showProductModal}
+        onHide={() => setShowProductModal(false)}
+        size="lg"
+      >
         <Form onSubmit={handleProductSubmit}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {editingProduct ? 'Edit Product' : 'Add New Product'}
+              {editingProduct ? "Edit Product" : "Add New Product"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -309,7 +368,9 @@ const AdminDashboard = () => {
                   <Form.Control
                     type="text"
                     value={productForm.name}
-                    onChange={(e) => setProductForm({...productForm, name: e.target.value})}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, name: e.target.value })
+                    }
                     required
                   />
                 </Form.Group>
@@ -320,20 +381,27 @@ const AdminDashboard = () => {
                   <Form.Control
                     type="text"
                     value={productForm.brand}
-                    onChange={(e) => setProductForm({...productForm, brand: e.target.value})}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, brand: e.target.value })
+                    }
                     required
                   />
                 </Form.Group>
               </Col>
             </Row>
-            
+
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
                   <Form.Label>Category *</Form.Label>
                   <Form.Select
                     value={productForm.category}
-                    onChange={(e) => setProductForm({...productForm, category: e.target.value})}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        category: e.target.value,
+                      })
+                    }
                     required
                   >
                     <option value="">Select Category</option>
@@ -354,7 +422,9 @@ const AdminDashboard = () => {
                     type="number"
                     step="0.01"
                     value={productForm.price}
-                    onChange={(e) => setProductForm({...productForm, price: e.target.value})}
+                    onChange={(e) =>
+                      setProductForm({ ...productForm, price: e.target.value })
+                    }
                     required
                   />
                 </Form.Group>
@@ -367,7 +437,12 @@ const AdminDashboard = () => {
                 as="textarea"
                 rows={3}
                 value={productForm.description}
-                onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                onChange={(e) =>
+                  setProductForm({
+                    ...productForm,
+                    description: e.target.value,
+                  })
+                }
               />
             </Form.Group>
 
@@ -376,7 +451,9 @@ const AdminDashboard = () => {
               <Form.Control
                 type="url"
                 value={productForm.image}
-                onChange={(e) => setProductForm({...productForm, image: e.target.value})}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, image: e.target.value })
+                }
               />
             </Form.Group>
 
@@ -385,22 +462,27 @@ const AdminDashboard = () => {
                 type="checkbox"
                 label="In Stock"
                 checked={productForm.inStock}
-                onChange={(e) => setProductForm({...productForm, inStock: e.target.checked})}
+                onChange={(e) =>
+                  setProductForm({ ...productForm, inStock: e.target.checked })
+                }
               />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowProductModal(false)}>
+            <Button
+              variant="secondary"
+              onClick={() => setShowProductModal(false)}
+            >
               Cancel
             </Button>
             <Button variant="primary" type="submit">
-              {editingProduct ? 'Update Product' : 'Add Product'}
+              {editingProduct ? "Update Product" : "Add Product"}
             </Button>
           </Modal.Footer>
         </Form>
       </Modal>
     </Container>
-  )
-}
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

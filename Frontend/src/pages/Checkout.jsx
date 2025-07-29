@@ -1,108 +1,135 @@
-import React, { useState } from 'react'
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
-import { FaCreditCard, FaLock, FaMapMarkerAlt, FaUser } from 'react-icons/fa'
-import { useAppContext } from '../App.jsx'
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert,
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { FaCreditCard, FaLock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
+import { useAppContext } from "../App.jsx";
+
+const USD_TO_INR = 83.5;
 
 const Checkout = () => {
-  const { cart, user, addOrder } = useAppContext()
-  const navigate = useNavigate()
-  
-  const [billingInfo, setBillingInfo] = useState({
-    firstName: user?.name?.split(' ')[0] || '',
-    lastName: user?.name?.split(' ')[1] || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'United States'
-  })
-  
-  const [paymentInfo, setPaymentInfo] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    nameOnCard: ''
-  })
-  
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const { cart, user, addOrder } = useAppContext();
+  const navigate = useNavigate();
 
-  const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-  const tax = subtotal * 0.08
-  const shipping = subtotal > 50 ? 0 : 9.99
-  const total = subtotal + tax + shipping
+  const [billingInfo, setBillingInfo] = useState({
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ")[1] || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "United States",
+  });
+
+  const [paymentInfo, setPaymentInfo] = useState({
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    nameOnCard: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const tax = subtotal * 0.08;
+  const shipping = subtotal > 50 ? 0 : 9.99;
+  const total = subtotal + tax + shipping;
 
   const handleBillingChange = (e) => {
     setBillingInfo({
       ...billingInfo,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handlePaymentChange = (e) => {
     setPaymentInfo({
       ...paymentInfo,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
       // Validate required fields
-      const requiredFields = ['firstName', 'lastName', 'email', 'address', 'city', 'state', 'zipCode']
-      const missingFields = requiredFields.filter(field => !billingInfo[field])
-      
+      const requiredFields = [
+        "firstName",
+        "lastName",
+        "email",
+        "address",
+        "city",
+        "state",
+        "zipCode",
+      ];
+      const missingFields = requiredFields.filter(
+        (field) => !billingInfo[field]
+      );
+
       if (missingFields.length > 0) {
-        throw new Error('Please fill in all required shipping information')
+        throw new Error("Please fill in all required shipping information");
       }
 
-      if (!paymentInfo.cardNumber || !paymentInfo.expiryDate || !paymentInfo.cvv || !paymentInfo.nameOnCard) {
-        throw new Error('Please fill in all payment information')
+      if (
+        !paymentInfo.cardNumber ||
+        !paymentInfo.expiryDate ||
+        !paymentInfo.cvv ||
+        !paymentInfo.nameOnCard
+      ) {
+        throw new Error("Please fill in all payment information");
       }
 
       // Simulate order processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const orderData = {
         items: cart,
         billingInfo,
         paymentInfo: {
           ...paymentInfo,
-          cardNumber: '**** **** **** ' + paymentInfo.cardNumber.slice(-4)
+          cardNumber: "**** **** **** " + paymentInfo.cardNumber.slice(-4),
         },
         totals: {
           subtotal,
           tax,
           shipping,
-          total
-        }
-      }
+          total,
+        },
+      };
 
-      addOrder(orderData)
-      navigate('/orders')
-      
+      addOrder(orderData);
+      navigate("/orders");
     } catch (err) {
-      setError(err.message || 'Order processing failed. Please try again.')
+      setError(err.message || "Order processing failed. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (!user) {
-    navigate('/login')
-    return null
+    navigate("/login");
+    return null;
   }
 
   if (cart.length === 0) {
-    navigate('/cart')
-    return null
+    navigate("/cart");
+    return null;
   }
 
   return (
@@ -159,7 +186,7 @@ const Checkout = () => {
                     </Form.Group>
                   </Col>
                 </Row>
-                
+
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
@@ -328,21 +355,37 @@ const Checkout = () => {
 
           {/* Order Summary */}
           <Col lg={4}>
-            <Card className="cart-summary position-sticky" style={{ top: '100px' }}>
+            <Card
+              className="cart-summary position-sticky"
+              style={{ top: "100px" }}
+            >
               <Card.Header>
                 <h5 className="mb-0">Order Summary</h5>
               </Card.Header>
               <Card.Body>
                 {/* Items */}
                 <div className="mb-3">
-                  {cart.map(item => (
-                    <div key={item.id} className="d-flex justify-content-between mb-2">
+                  {cart.map((item) => (
+                    <div
+                      key={item.id}
+                      className="d-flex justify-content-between mb-2"
+                    >
                       <div className="flex-grow-1">
                         <div className="fw-bold small">{item.name}</div>
-                        <div className="text-muted small">Qty: {item.quantity}</div>
+                        <div className="text-muted small">
+                          Qty: {item.quantity}
+                        </div>
                       </div>
                       <div className="text-end">
-                        <div className="fw-bold">${(item.price * item.quantity).toFixed(2)}</div>
+                        <div className="fw-bold">
+                          <span>
+                            {new Intl.NumberFormat("en-IN", {
+                              style: "currency",
+                              currency: "INR",
+                              maximumFractionDigits: 0,
+                            }).format(item.price * item.quantity * USD_TO_INR)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -353,11 +396,23 @@ const Checkout = () => {
                 {/* Totals */}
                 <div className="d-flex justify-content-between mb-2">
                   <span>Subtotal:</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(subtotal * USD_TO_INR)}
+                  </span>
                 </div>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Tax:</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(tax * USD_TO_INR)}
+                  </span>
                 </div>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Shipping:</span>
@@ -365,24 +420,38 @@ const Checkout = () => {
                     {shipping === 0 ? (
                       <span className="text-success">FREE</span>
                     ) : (
-                      `$${shipping.toFixed(2)}`
+                      `$ 
+ ${new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(shipping * USD_TO_INR)}
+</span>`
                     )}
                   </span>
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between mb-3">
                   <strong>Total:</strong>
-                  <strong className="price-tag">${total.toFixed(2)}</strong>
+                  <strong className="price-tag">
+                    <span>
+                      {new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                        maximumFractionDigits: 0,
+                      }).format(total * USD_TO_INR)}
+                    </span>
+                  </strong>
                 </div>
 
-                <Button 
-                  variant="success" 
-                  size="lg" 
+                <Button
+                  variant="success"
+                  size="lg"
                   type="submit"
                   className="w-100"
                   disabled={loading}
                 >
-                  {loading ? 'Processing...' : 'Place Order'}
+                  {loading ? "Processing..." : "Place Order"}
                 </Button>
               </Card.Body>
             </Card>
@@ -390,7 +459,7 @@ const Checkout = () => {
         </Row>
       </Form>
     </Container>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;

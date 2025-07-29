@@ -1,4 +1,8 @@
 // Sample product data for the TechBasket frontend
+
+const USD_TO_INR =83.5;
+
+
 export const products = [
   {
     id: 1,

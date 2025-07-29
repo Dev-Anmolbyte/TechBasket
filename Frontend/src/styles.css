@@ -69,7 +69,7 @@ body {
 .category-card {
   transition: all 0.3s ease;
   border: 1px solid #e0e0e0;
-  cursor: pointer;
+  cursor:pointer;
 }
 
 .category-card:hover {
@@ -236,3 +236,36 @@ body {
     padding-top: 0 !important;
   }
 }
+
+/* footer */
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #0d6efd;
+}
+
+.social-icons a {
+  color: #fff;
+}
+
+.social-icons a:hover {
+  color: #0d6efd;
+}
+
+/* shopping */
+
+.shopping-container{
+  margin-top: -44px ;
+}
+
+
+
+/*  Footer links */
+.facebook svg { color: #1877F2; }   /* Facebook Blue */
+.twitter svg { color: #1DA1F2; }    /* Twitter Blue */
+.instagram svg { color: #E1306C; }  /* Instagram Pink */
+.linkedin svg { color: #0A66C2; }   /* LinkedIn Blue */

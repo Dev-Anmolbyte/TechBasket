@@ -1,62 +1,80 @@
-import React, { useState, useMemo } from 'react'
-import { Container, Row, Col, Form, Card, Button } from 'react-bootstrap'
-import { FaSearch, FaFilter } from 'react-icons/fa'
-import ProductCard from '../components/ProductCard.jsx'
-import { products, categories, brands } from '../data/products.js'
+import React, { useState, useMemo } from "react";
+import { Container, Row, Col, Form, Card, Button } from "react-bootstrap";
+import { FaSearch, FaFilter } from "react-icons/fa";
+import ProductCard from "../components/ProductCard.jsx";
+import { products, categories, brands } from "../data/products.js";
 
 const Shopping = () => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('All Categories')
-  const [selectedBrand, setSelectedBrand] = useState('All Brands')
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' })
-  const [sortBy, setSortBy] = useState('name')
-  const [inStockOnly, setInStockOnly] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [sortBy, setSortBy] = useState("name");
+  const [inStockOnly, setInStockOnly] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    let filtered = products.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.category.toLowerCase().includes(searchTerm.toLowerCase())
-      
-      const matchesCategory = selectedCategory === 'All Categories' || product.category === selectedCategory
-      const matchesBrand = selectedBrand === 'All Brands' || product.brand === selectedBrand
-      const matchesStock = !inStockOnly || product.inStock
-      
-      const matchesPrice = (!priceRange.min || product.price >= parseFloat(priceRange.min)) &&
-                          (!priceRange.max || product.price <= parseFloat(priceRange.max))
+    let filtered = products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase());
 
-      return matchesSearch && matchesCategory && matchesBrand && matchesStock && matchesPrice
-    })
+      const matchesCategory =
+        selectedCategory === "All Categories" ||
+        product.category === selectedCategory;
+      const matchesBrand =
+        selectedBrand === "All Brands" || product.brand === selectedBrand;
+      const matchesStock = !inStockOnly || product.inStock;
+
+      const matchesPrice =
+        (!priceRange.min || product.price >= parseFloat(priceRange.min)) &&
+        (!priceRange.max || product.price <= parseFloat(priceRange.max));
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesBrand &&
+        matchesStock &&
+        matchesPrice
+      );
+    });
 
     // Sort products
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price
-        case 'price-high':
-          return b.price - a.price
-        case 'rating':
-          return b.rating - a.rating
-        case 'name':
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "rating":
+          return b.rating - a.rating;
+        case "name":
         default:
-          return a.name.localeCompare(b.name)
+          return a.name.localeCompare(b.name);
       }
-    })
+    });
 
-    return filtered
-  }, [searchTerm, selectedCategory, selectedBrand, priceRange, sortBy, inStockOnly])
+    return filtered;
+  }, [
+    searchTerm,
+    selectedCategory,
+    selectedBrand,
+    priceRange,
+    sortBy,
+    inStockOnly,
+  ]);
 
   const clearFilters = () => {
-    setSearchTerm('')
-    setSelectedCategory('All Categories')
-    setSelectedBrand('All Brands')
-    setPriceRange({ min: '', max: '' })
-    setSortBy('name')
-    setInStockOnly(false)
-  }
+    setSearchTerm("");
+    setSelectedCategory("All Categories");
+    setSelectedBrand("All Brands");
+    setPriceRange({ min: "", max: "" });
+    setSortBy("name");
+    setInStockOnly(false);
+  };
 
   return (
-    <Container className="py-4">
+    <Container className="shopping-container py-1">
       <Row className="mb-4">
         <Col>
           <h1>PC Components</h1>
@@ -91,7 +109,7 @@ const Shopping = () => {
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
-                  {categories.map(category => (
+                  {categories.map((category) => (
                     <option key={category} value={category}>
                       {category}
                     </option>
@@ -106,7 +124,7 @@ const Shopping = () => {
                   value={selectedBrand}
                   onChange={(e) => setSelectedBrand(e.target.value)}
                 >
-                  {brands.map(brand => (
+                  {brands.map((brand) => (
                     <option key={brand} value={brand}>
                       {brand}
                     </option>
@@ -137,7 +155,12 @@ const Shopping = () => {
                     placeholder="Min"
                     size="sm"
                     value={priceRange.min}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        min: e.target.value,
+                      }))
+                    }
                   />
                   <span className="mx-1">-</span>
                   <Form.Control
@@ -145,7 +168,12 @@ const Shopping = () => {
                     placeholder="Max"
                     size="sm"
                     value={priceRange.max}
-                    onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: e.target.value,
+                      }))
+                    }
                   />
                 </div>
               </Form.Group>
@@ -182,7 +210,7 @@ const Shopping = () => {
       {/* Products Grid */}
       {filteredProducts.length > 0 ? (
         <Row>
-          {filteredProducts.map(product => (
+          {filteredProducts.map((product) => (
             <Col key={product.id} lg={3} md={4} sm={6} className="mb-4">
               <ProductCard product={product} />
             </Col>
@@ -203,7 +231,7 @@ const Shopping = () => {
         </Card>
       )}
     </Container>
-  )
-}
+  );
+};
 
-export default Shopping
+export default Shopping;

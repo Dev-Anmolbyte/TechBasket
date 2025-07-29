@@ -1,48 +1,61 @@
-import React, { useState } from 'react'
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaUser, FaEnvelope, FaLock, FaPhone } from 'react-icons/fa'
-import { useAppContext } from '../App.jsx'
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert,
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
+import { useAppContext } from "../App.jsx";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAppContext()
-  const navigate = useNavigate()
+  const { login } = useAppContext();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
       // Validate form
-      if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-        throw new Error('Please fill in all required fields')
+      if (
+        !formData.firstName ||
+        !formData.lastName ||
+        !formData.email ||
+        !formData.password
+      ) {
+        throw new Error("Please fill in all required fields");
       }
 
       if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match')
+        throw new Error("Passwords do not match");
       }
 
       if (formData.password.length < 6) {
-        throw new Error('Password must be at least 6 characters long')
+        throw new Error("Password must be at least 6 characters long");
       }
 
       // Simulate registration (in real app, this would be an API call)
@@ -51,17 +64,17 @@ const Register = () => {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         phone: formData.phone,
-        role: 'customer'
-      }
+        role: "customer",
+      };
 
-      login(userData)
-      navigate('/')
+      login(userData);
+      navigate("/");
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.')
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Container className="py-5">
@@ -195,12 +208,17 @@ const Register = () => {
                 <div className="mb-3">
                   <Form.Check
                     type="checkbox"
-                    label={<>
-                      I agree to the{' '}
-                      <Link to="/terms" target="_blank" rel="noopener noreferrer">
-                        Terms and Conditions
-                      </Link>
-                    </>
+                    label={
+                      <>
+                        I agree to the{" "}
+                        <Link
+                          to="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Terms and Conditions
+                        </Link>
+                      </>
                     }
                     required
                   />
@@ -212,7 +230,7 @@ const Register = () => {
                   className="w-100 mb-3"
                   disabled={loading}
                 >
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? "Creating Account..." : "Create Account"}
                 </Button>
               </Form>
             </Card.Body>
@@ -226,7 +244,7 @@ const Register = () => {
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

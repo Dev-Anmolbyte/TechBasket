@@ -1,30 +1,36 @@
-import React from 'react'
-import { Container, Row, Col, Card, Badge, Button } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { FaShoppingBag, FaEye, FaDownload } from 'react-icons/fa'
-import { useAppContext } from '../App.jsx'
+import React from "react";
+import { Container, Row, Col, Card, Badge, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { FaShoppingBag, FaEye, FaDownload } from "react-icons/fa";
+import { useAppContext } from "../App.jsx";
 
 const OrderHistory = () => {
-  const { orders, user } = useAppContext()
+  const { orders, user } = useAppContext();
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
-      case 'pending': return 'warning'
-      case 'processing': return 'info'
-      case 'shipped': return 'primary'
-      case 'delivered': return 'success'
-      case 'cancelled': return 'danger'
-      default: return 'secondary'
+      case "pending":
+        return "warning";
+      case "processing":
+        return "info";
+      case "shipped":
+        return "primary";
+      case "delivered":
+        return "success";
+      case "cancelled":
+        return "danger";
+      default:
+        return "secondary";
     }
-  }
+  };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   if (!user) {
     return (
@@ -34,7 +40,7 @@ const OrderHistory = () => {
           <Button variant="primary">Login</Button>
         </Link>
       </Container>
-    )
+    );
   }
 
   return (
@@ -52,7 +58,8 @@ const OrderHistory = () => {
             <FaShoppingBag size={64} className="text-muted mb-4" />
             <h3>No Orders Yet</h3>
             <p className="text-muted mb-4">
-              You haven't placed any orders yet. Start shopping to see your order history here.
+              You haven't placed any orders yet. Start shopping to see your
+              order history here.
             </p>
             <Link to="/shopping">
               <Button variant="primary" size="lg">
@@ -63,10 +70,14 @@ const OrderHistory = () => {
         </Row>
       ) : (
         <Row>
-          {orders.map(order => {
-            const orderTotal = order.totals?.total || 
-              order.items.reduce((total, item) => total + (item.price * item.quantity), 0)
-            
+          {orders.map((order) => {
+            const orderTotal =
+              order.totals?.total ||
+              order.items.reduce(
+                (total, item) => total + item.price * item.quantity,
+                0
+              );
+
             return (
               <Col key={order.id} className="mb-4">
                 <Card>
@@ -81,8 +92,12 @@ const OrderHistory = () => {
                         </small>
                       </Col>
                       <Col md={2}>
-                        <Badge bg={getStatusColor(order.status)} className="order-status">
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        <Badge
+                          bg={getStatusColor(order.status)}
+                          className="order-status"
+                        >
+                          {order.status.charAt(0).toUpperCase() +
+                            order.status.slice(1)}
                         </Badge>
                       </Col>
                       <Col md={2}>
@@ -92,11 +107,16 @@ const OrderHistory = () => {
                       </Col>
                       <Col md={2}>
                         <small className="text-muted">
-                          {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                          {order.items.length} item
+                          {order.items.length !== 1 ? "s" : ""}
                         </small>
                       </Col>
                       <Col md={3} className="text-end">
-                        <Button variant="outline-primary" size="sm" className="me-2">
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          className="me-2"
+                        >
                           <FaEye className="me-1" />
                           View Details
                         </Button>
@@ -112,13 +132,21 @@ const OrderHistory = () => {
                       <Col md={8}>
                         <h6>Items Ordered:</h6>
                         <div className="mb-3">
-                          {order.items.slice(0, 3).map(item => (
-                            <div key={item.id} className="d-flex align-items-center mb-2">
-                              <img 
-                                src={item.image} 
+                          {order.items.slice(0, 3).map((item) => (
+                            <div
+                              key={item.id}
+                              className="d-flex align-items-center mb-2"
+                            >
+                              <img
+                                src={item.image}
                                 alt={item.name}
                                 className="me-3"
-                                style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  objectFit: "cover",
+                                  borderRadius: "4px",
+                                }}
                               />
                               <div className="flex-grow-1">
                                 <div className="small fw-bold">{item.name}</div>
@@ -139,24 +167,38 @@ const OrderHistory = () => {
                         <h6>Delivery Information:</h6>
                         {order.billingInfo && (
                           <div className="small">
-                            <div>{order.billingInfo.firstName} {order.billingInfo.lastName}</div>
+                            <div>
+                              {order.billingInfo.firstName}{" "}
+                              {order.billingInfo.lastName}
+                            </div>
                             <div>{order.billingInfo.address}</div>
-                            <div>{order.billingInfo.city}, {order.billingInfo.state} {order.billingInfo.zipCode}</div>
+                            <div>
+                              {order.billingInfo.city},{" "}
+                              {order.billingInfo.state}{" "}
+                              {order.billingInfo.zipCode}
+                            </div>
                           </div>
                         )}
-                        
-                        {order.status === 'shipped' && (
+
+                        {order.status === "shipped" && (
                           <div className="mt-3">
                             <strong>Tracking Number:</strong>
-                            <div className="font-monospace">1Z999AA1234567890</div>
+                            <div className="font-monospace">
+                              1Z999AA1234567890
+                            </div>
                           </div>
                         )}
-                        
-                        {order.status === 'delivered' && (
+
+                        {order.status === "delivered" && (
                           <div className="mt-3 text-success">
                             <strong>✓ Delivered</strong>
                             <div className="small">
-                              {formatDate(new Date(Date.parse(order.orderDate) + 7 * 24 * 60 * 60 * 1000))}
+                              {formatDate(
+                                new Date(
+                                  Date.parse(order.orderDate) +
+                                    7 * 24 * 60 * 60 * 1000
+                                )
+                              )}
                             </div>
                           </div>
                         )}
@@ -168,23 +210,49 @@ const OrderHistory = () => {
                       <Col>
                         <div className="d-flex justify-content-between align-items-center">
                           <div className="d-flex align-items-center">
-                            <div className={`bg-${order.status === 'pending' ? 'warning' : 'success'} rounded-circle`} 
-                                 style={{ width: '12px', height: '12px' }}></div>
+                            <div
+                              className={`bg-${
+                                order.status === "pending"
+                                  ? "warning"
+                                  : "success"
+                              } rounded-circle`}
+                              style={{ width: "12px", height: "12px" }}
+                            ></div>
                             <span className="ms-2 small">Order Placed</span>
                           </div>
                           <div className="d-flex align-items-center">
-                            <div className={`bg-${['processing', 'shipped', 'delivered'].includes(order.status) ? 'success' : 'light'} rounded-circle`} 
-                                 style={{ width: '12px', height: '12px' }}></div>
+                            <div
+                              className={`bg-${
+                                ["processing", "shipped", "delivered"].includes(
+                                  order.status
+                                )
+                                  ? "success"
+                                  : "light"
+                              } rounded-circle`}
+                              style={{ width: "12px", height: "12px" }}
+                            ></div>
                             <span className="ms-2 small">Processing</span>
                           </div>
                           <div className="d-flex align-items-center">
-                            <div className={`bg-${['shipped', 'delivered'].includes(order.status) ? 'success' : 'light'} rounded-circle`} 
-                                 style={{ width: '12px', height: '12px' }}></div>
+                            <div
+                              className={`bg-${
+                                ["shipped", "delivered"].includes(order.status)
+                                  ? "success"
+                                  : "light"
+                              } rounded-circle`}
+                              style={{ width: "12px", height: "12px" }}
+                            ></div>
                             <span className="ms-2 small">Shipped</span>
                           </div>
                           <div className="d-flex align-items-center">
-                            <div className={`bg-${order.status === 'delivered' ? 'success' : 'light'} rounded-circle`} 
-                                 style={{ width: '12px', height: '12px' }}></div>
+                            <div
+                              className={`bg-${
+                                order.status === "delivered"
+                                  ? "success"
+                                  : "light"
+                              } rounded-circle`}
+                              style={{ width: "12px", height: "12px" }}
+                            ></div>
                             <span className="ms-2 small">Delivered</span>
                           </div>
                         </div>
@@ -193,12 +261,12 @@ const OrderHistory = () => {
                   </Card.Body>
                 </Card>
               </Col>
-            )
+            );
           })}
         </Row>
       )}
     </Container>
-  )
-}
+  );
+};
 
-export default OrderHistory
+export default OrderHistory;

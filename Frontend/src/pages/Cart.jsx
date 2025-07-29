@@ -1,33 +1,52 @@
-import React from 'react'
-import { Container, Row, Col, Card, Button, Form, Alert } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaTrash, FaMinus, FaPlus, FaShoppingBag, FaArrowLeft } from 'react-icons/fa'
-import { useAppContext } from '../App.jsx'
+import React from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Form,
+  Alert,
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FaTrash,
+  FaMinus,
+  FaPlus,
+  FaShoppingBag,
+  FaArrowLeft,
+} from "react-icons/fa";
+import { useAppContext } from "../App.jsx";
+
+const USD_TO_INR = 83.5;
 
 const Cart = () => {
-  const { cart, updateCartQuantity, removeFromCart, user } = useAppContext()
-  const navigate = useNavigate()
+  const { cart, updateCartQuantity, removeFromCart, user } = useAppContext();
+  const navigate = useNavigate();
 
-  const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-  const tax = subtotal * 0.08 // 8% tax
-  const shipping = subtotal > 50 ? 0 : 9.99
-  const total = subtotal + tax + shipping
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const tax = subtotal * 0.08; // 8% tax
+  const shipping = subtotal > 50 ? 0 : 9.99;
+  const total = subtotal + tax + shipping;
 
   const handleQuantityChange = (productId, newQuantity) => {
-    updateCartQuantity(productId, newQuantity)
-  }
+    updateCartQuantity(productId, newQuantity);
+  };
 
   const handleRemoveItem = (productId) => {
-    removeFromCart(productId)
-  }
+    removeFromCart(productId);
+  };
 
   const handleCheckout = () => {
     if (!user) {
-      navigate('/login')
-      return
+      navigate("/login");
+      return;
     }
-    navigate('/checkout')
-  }
+    navigate("/checkout");
+  };
 
   if (cart.length === 0) {
     return (
@@ -47,15 +66,15 @@ const Cart = () => {
           </Col>
         </Row>
       </Container>
-    )
+    );
   }
 
   return (
     <Container className="py-4">
       <Row className="mb-3">
         <Col>
-          <Button 
-            variant="link" 
+          <Button
+            variant="link"
             className="p-0 mb-2"
             onClick={() => navigate(-1)}
           >
@@ -69,33 +88,44 @@ const Cart = () => {
       <Row>
         {/* Cart Items */}
         <Col lg={8}>
-          {cart.map(item => (
+          {cart.map((item) => (
             <Card key={item.id} className="cart-item">
               <Card.Body>
                 <Row className="align-items-center">
                   <Col md={2}>
-                    <img 
-                      src={item.image} 
+                    <img
+                      src={item.image}
                       alt={item.name}
                       className="img-fluid rounded"
-                      style={{ height: '80px', objectFit: 'cover', width: '100%' }}
+                      style={{
+                        height: "80px",
+                        objectFit: "cover",
+                        width: "100%",
+                      }}
                     />
                   </Col>
                   <Col md={4}>
                     <h6 className="mb-1">{item.name}</h6>
-                    <p className="text-muted small mb-0">{item.brand} • {item.category}</p>
+                    <p className="text-muted small mb-0">
+                      {item.brand} • {item.category}
+                    </p>
                     {!item.inStock && (
-                      <Alert variant="warning" className="py-1 px-2 mt-1 mb-0 small">
+                      <Alert
+                        variant="warning"
+                        className="py-1 px-2 mt-1 mb-0 small"
+                      >
                         Out of Stock
                       </Alert>
                     )}
                   </Col>
                   <Col md={2}>
                     <div className="d-flex align-items-center">
-                      <Button 
-                        variant="outline-secondary" 
+                      <Button
+                        variant="outline-secondary"
                         size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                        onClick={() =>
+                          handleQuantityChange(item.id, item.quantity - 1)
+                        }
                         disabled={item.quantity <= 1}
                       >
                         <FaMinus />
@@ -104,14 +134,21 @@ const Cart = () => {
                         type="number"
                         min="1"
                         value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            item.id,
+                            parseInt(e.target.value) || 1
+                          )
+                        }
                         className="mx-2 text-center"
-                        style={{ width: '60px' }}
+                        style={{ width: "60px" }}
                       />
-                      <Button 
-                        variant="outline-secondary" 
+                      <Button
+                        variant="outline-secondary"
                         size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                        onClick={() =>
+                          handleQuantityChange(item.id, item.quantity + 1)
+                        }
                       >
                         <FaPlus />
                       </Button>
@@ -119,8 +156,25 @@ const Cart = () => {
                   </Col>
                   <Col md={2}>
                     <div className="text-center">
-                      <div className="fw-bold">${(item.price * item.quantity).toFixed(2)}</div>
-                      <div className="small text-muted">${item.price} each</div>
+                      <div className="fw-bold">
+                        <span>
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(item.price * item.quantity * USD_TO_INR)}
+                        </span>
+                      </div>
+                      <div className="small text-muted">
+                        <span>
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(item.price * USD_TO_INR)}{" "}
+                          for each
+                        </span>
+                      </div>
                     </div>
                   </Col>
                   <Col md={2}>
@@ -140,18 +194,33 @@ const Cart = () => {
 
         {/* Order Summary */}
         <Col lg={4}>
-          <Card className="cart-summary position-sticky" style={{ top: '100px' }}>
+          <Card
+            className="cart-summary position-sticky"
+            style={{ top: "100px" }}
+          >
             <Card.Header>
               <h5 className="mb-0">Order Summary</h5>
             </Card.Header>
             <Card.Body>
               <div className="d-flex justify-content-between mb-2">
                 <span>Subtotal ({cart.length} items):</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>
+                  {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0,
+                  }).format(subtotal * USD_TO_INR)}
+                </span>
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span>Tax:</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>
+                  {new Intl.NumberFormat("en-IN", {
+                    style: "currency",
+                    currency: "INR",
+                    maximumFractionDigits: 0,
+                  }).format(tax * USD_TO_INR)}
+                </span>
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span>Shipping:</span>
@@ -159,33 +228,54 @@ const Cart = () => {
                   {shipping === 0 ? (
                     <span className="text-success">FREE</span>
                   ) : (
-                    `$${shipping.toFixed(2)}`
+                    `$
+  ${new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(shipping)}`
                   )}
                 </span>
               </div>
               <hr />
               <div className="d-flex justify-content-between mb-3">
                 <strong>Total:</strong>
-                <strong className="price-tag">${total.toFixed(2)}</strong>
+                <strong className="price-tag">
+                  <span>
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(total * USD_TO_INR)}
+                  </span>
+                </strong>
               </div>
 
               {shipping > 0 && (
                 <Alert variant="info" className="py-2 px-3 mb-3 small">
-                  Add ${(50 - subtotal).toFixed(2)} more for free shipping!
+                  Add{" "}
+                  <span>
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(50 - subtotal)}
+                  </span>{" "}
+                  more for free shipping!
                 </Alert>
               )}
 
-              <Button 
-                variant="primary" 
-                size="lg" 
+              <Button
+                variant="primary"
+                size="lg"
                 className="w-100 mb-3"
                 onClick={handleCheckout}
               >
-                {user ? 'Proceed to Checkout' : 'Login to Checkout'}
+                {user ? "Proceed to Checkout" : "Login to Checkout"}
               </Button>
 
-              <Button 
-                variant="outline-primary" 
+              <Button
+                variant="outline-primary"
                 className="w-100"
                 as={Link}
                 to="/shopping"
@@ -207,7 +297,7 @@ const Cart = () => {
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;

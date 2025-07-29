@@ -1,59 +1,70 @@
-import React, { useState } from 'react'
-import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaUser, FaLock } from 'react-icons/fa'
-import { useAppContext } from '../App.jsx'
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert,
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa";
+import { useAppContext } from "../App.jsx";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  
-  const { login } = useAppContext()
-  const navigate = useNavigate()
+    email: "",
+    password: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { login } = useAppContext();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
       // Simulate login logic (in real app, this would be an API call)
-      if (formData.email === 'admin@techbasket.com' && formData.password === 'admin123') {
+      if (
+        formData.email === "admin@techbasket.com" &&
+        formData.password === "admin123"
+      ) {
         login({
           id: 1,
-          name: 'Admin User',
+          name: "Admin User",
           email: formData.email,
-          role: 'admin'
-        })
+          role: "admin",
+        });
       } else if (formData.email && formData.password) {
         login({
           id: 2,
-          name: 'John Doe',
+          name: "John Doe",
           email: formData.email,
-          role: 'customer'
-        })
+          role: "customer",
+        });
       } else {
-        throw new Error('Please fill in all fields')
+        throw new Error("Please fill in all fields");
       }
-      
-      navigate('/')
+
+      navigate("/");
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.')
+      setError(err.message || "Login failed. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Container className="py-5">
@@ -108,19 +119,16 @@ const Login = () => {
                 </Form.Group>
 
                 <div className="mb-3">
-                  <Form.Check 
-                    type="checkbox" 
-                    label="Remember me" 
-                  />
+                  <Form.Check type="checkbox" label="Remember me" />
                 </div>
 
-                <Button 
-                  variant="primary" 
-                  type="submit" 
+                <Button
+                  variant="primary"
+                  type="submit"
                   className="w-100 mb-3"
                   disabled={loading}
                 >
-                  {loading ? 'Signing In...' : 'Sign In'}
+                  {loading ? "Signing In..." : "Sign In"}
                 </Button>
 
                 <div className="text-center">
@@ -153,7 +161,7 @@ const Login = () => {
         </Col>
       </Row>
     </Container>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
