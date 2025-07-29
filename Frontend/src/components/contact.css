@@ -1,0 +1,72 @@
+.contact-us-section {
+  position: relative;
+  background-image: url('/Screenshot 2025-07-29 233928.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-overlay {
+  background-color: rgba(0, 0, 0, 0.55); /* Slightly darker overlay for readability */
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  max-width: 1200px;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.contact-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 16px;
+  text-align: center;
+  color: #fff;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.contact-box:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px);
+}
+
+.contact-box .icon {
+  color: #0d6efd;
+  margin-bottom: 12px;
+}
+
+.contact-box h5 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #ffffffcc;
+}
+
+.contact-box p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #f1f1f1;
+  margin: 0;
+  font-weight: 500;
+}

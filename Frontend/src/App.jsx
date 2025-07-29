@@ -28,6 +28,7 @@ import Privacypolicy from "./components/Privacypolicy";
 //Return Policy
 import Returnpolicy from "./components/Returnpolicy";
 import ScrollReset from "./components/scrolls/ScrollReset.jsx";
+import ContactUs from "./components/ContactUs.jsx";
 
 // Create App Context
 const AppContext = createContext();
@@ -203,6 +204,7 @@ function App() {
             <Route path="/privacy" element={<Privacypolicy />} />
             <Route path="/return" element={<Returnpolicy />} />
             <Route path="/forgot-password" element={<Forgotpassword />} />
+            <Route path="/ContactUs" element={<ContactUs/>}/>
 
           </Routes>
         </main>

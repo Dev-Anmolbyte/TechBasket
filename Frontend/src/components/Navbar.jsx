@@ -62,6 +62,9 @@ const Navbar = () => {
             <Nav.Link as={Link} to="/shopping">
               Shop
             </Nav.Link>
+            <Nav.Link as={Link} to="/ContactUs">
+              contact us
+            </Nav.Link>
           </Nav>
 
           <Nav className="align-items-center">
