@@ -29,6 +29,7 @@ const AdminDashboard = () => {
   const { user, orders } = useAppContext();
   const navigate = useNavigate();
 
+
   const [products, setProducts] = useState(initialProducts);
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -163,7 +164,7 @@ const AdminDashboard = () => {
           <Card className="text-center admin-stat-card">
             <Card.Body>
               <FaDollarSign size={32} className="text-success mb-2" />
-              <h3 className="mb-0">${totalRevenue.toFixed(2)}</h3>
+              <h3 className="mb-0">₹{totalRevenue.toFixed(2)}</h3>
               <p className="text-muted mb-0">Total Revenue</p>
             </Card.Body>
           </Card>

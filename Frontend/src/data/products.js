@@ -1,16 +1,19 @@
 // Sample product data for the TechBasket frontend
 
-const USD_TO_INR =83.5;
+import { FaWeight } from "react-icons/fa"
+
+//const USD_TO_INR =83.5;
 
 
 export const products = [
+  //this is perfect for processor
   {
     id: 1,
-    name: 'AMD Ryzen 9 7900X',
+    name: 'AMD 7000 Series Ryzen 9 7900X Desktop Processor 12 cores 24 Threads 76 MB Cache 4.7 GHz Up to 5.6 GHz Socket AM5, 600 Series Chipset (100-100000589WOF)',
     brand: 'AMD',
     category: 'Processors',
-    price: 399.99,
-    image: 'https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=400&h=300&fit=crop',
+    price: 700,
+    image: 'https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-9-7900x.jpg',
     rating: 5,
     reviews: 245,
     inStock: true,
@@ -26,11 +29,11 @@ export const products = [
   },
   {
     id: 2,
-    name: 'Intel Core i7-13700K',
+    name: 'Intel® Core™ i7-13700K Processor 30M Cache, up to 5.40 GHz',
     brand: 'Intel',
     category: 'Processors',
     price: 349.99,
-    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400&h=300&fit=crop',
+    image: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcRRj_sVCo9QKNC8MB76ulcnH1kZb9ZBXRSzxO_c-tUizj8CSxCDQPt74FbEkSR6zdoO6v4pyu7rewPbvBqGSwX0HcHSXom-',
     rating: 4,
     reviews: 180,
     inStock: true,
@@ -44,13 +47,16 @@ export const products = [
       tdp: '125W'
     }
   },
+  //-----------------Processor Adding End--------------------
+
+  //graphic adding start
   {
     id: 3,
-    name: 'NVIDIA GeForce RTX 4080',
+    name: 'ASUS Tuf Gaming Geforce RTX 4080 16Gb Gddr6X Oc Edition - Black (Tuf-Rtx4080-O16G-Gaming) - Pci_E',
     brand: 'NVIDIA',
     category: 'Graphics Cards',
     price: 1199.99,
-    image: 'https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop',
+    image: 'https://m.media-amazon.com/images/I/71dfNA+N52L.jpg',
     rating: 5,
     reviews: 320,
     inStock: true,
@@ -70,7 +76,7 @@ export const products = [
     brand: 'AMD',
     category: 'Graphics Cards',
     price: 899.99,
-    image: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop',
+    image: 'https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRrRHtzBy1zyvkaaiY0W5qvDuliHn3EE-VDdk5XxWoUiawiii0uzkoyhNLLBrEXlMHbNsGh4-7tVfj_DKXIVy2Q8IC5uZF3h3__YtWPipP14yyzOOXGnvCx',
     rating: 4,
     reviews: 150,
     inStock: false,
@@ -84,20 +90,21 @@ export const products = [
       powerConsumption: '263W'
     }
   },
+  //-----------------GPU Adding End--------------------
   {
     id: 5,
     name: 'Corsair Vengeance RGB Pro 32GB',
     brand: 'Corsair',
     category: 'Memory',
-    price: 159.99,
-    image: 'https://images.unsplash.com/photo-1541029071515-84cc04fe9b37?w=400&h=300&fit=crop',
+    price: 250,
+    image: 'https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100,f_auto/products/Memory/CMW32GX4M2E3200C16/Gallery/Vengeance_RGB_Pro_01.webp',
     rating: 5,
     reviews: 89,
     inStock: true,
     description: 'High-performance DDR4 memory with RGB lighting',
     specifications: {
       capacity: '32GB (2x16GB)',
-      type: 'DDR4',
+      type: 'DDR5',
       speed: '3200 MHz',
       latency: 'CL16',
       voltage: '1.35V',
@@ -109,8 +116,8 @@ export const products = [
     name: 'G.Skill Trident Z5 RGB 32GB',
     brand: 'G.Skill',
     category: 'Memory',
-    price: 199.99,
-    image: 'https://images.unsplash.com/photo-1562976540-1502c2145186?w=400&h=300&fit=crop',
+    price: 280,
+    image: 'https://m.media-amazon.com/images/I/41MthU0ly5L._SY300_SX300_QL70_FMwebp_.jpg',
     rating: 5,
     reviews: 67,
     inStock: true,
@@ -124,13 +131,14 @@ export const products = [
       rgb: 'Yes'
     }
   },
+  //-----------------RAM Adding End--------------------
   {
     id: 7,
-    name: 'Samsung 980 PRO 2TB',
+    name: 'Samsung 980 PRO SSD 2TB PCIe 4.0 M.2 Internal Solid State Drive, Fastest Speed for Gaming, Heat Control, Direct Storage and Memory Expansion for Video Editing, Heavy Graphics, MZ-V9P2T0BW',
     brand: 'Samsung',
     category: 'Storage',
-    price: 199.99,
-    image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400&h=300&fit=crop',
+    price: 150,
+    image:'https://m.media-amazon.com/images/I/61sFhWjzfqL._SX679_.jpg',
     rating: 5,
     reviews: 234,
     inStock: true,
@@ -146,11 +154,11 @@ export const products = [
   },
   {
     id: 8,
-    name: 'WD Black SN770 1TB',
+    name: 'WD_Black Western Digital SN7100 NVMe 2TB, Upto 7250MB/s R, 6900MB/s W, 5Y Warranty, PCIe Gen 4 NVMe M.2 (2280), Gaming Storage, Internal Solid State Drive (SSD) (WDS200T4X0E-00CJA0)',
     brand: 'Western Digital',
     category: 'Storage',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop',
+    price: 110,
+    image: 'https://m.media-amazon.com/images/I/516yn6znnLL._SX522_.jpg',
     rating: 4,
     reviews: 156,
     inStock: true,
@@ -164,46 +172,121 @@ export const products = [
       formFactor: 'M.2 2280'
     }
   },
+  //-----------------Storage Adding End--------------------
+  
+  //this is perfect for mouse (pheripherals)
   {
     id: 9,
-    name: 'WD Black SN770 1TB',
-    brand: 'Western Digital',
-    category: 'Storage',
-    price: 89.99,
-    image: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=300&fit=crop',
+    name: 'Kreo Pegasus',
+    brand: 'Kreo',
+    category: 'Prepherals',
+    price: 35.9,
+    image: 'https://kreo-tech.com/cdn/shop/files/Artboard_3_4.png?v=1753673135&width=1000',
     rating: 4,
     reviews: 156,
     inStock: true,
-    description: 'Reliable NVMe SSD for gaming and productivity',
+    description: 'Best Mouse with Gaming Grade Sensor',
     specifications: {
-      capacity: '1TB',
-      type: 'NVMe SSD',
-      interface: 'PCIe 4.0',
-      readSpeed: '5150 MB/s',
-      writeSpeed: '4900 MB/s',
-      formFactor: 'M.2 2280'
+      sensor: 'Pixart 3395 Sensor',
+      type: 'mouse',
+      battery: '30+ Hours battery life',
+      connectivity: 'BT, 2.4GHz or Wired',
+      buttons: 'Huano switches',
+      polling_rate: '1000Hz',
+      Weight: '58g'
     }
   },
+
   {
     id: 10,
-    name: 'Intel Core i7-13700K',
-    brand: 'Intel',
-    category: 'Processors',
-    price: 349.99,
-    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400&h=300&fit=crop',
+    name: 'Kreo Ikarus',
+    brand: 'Kreo',
+    category: 'Prepherals',
+    price: 60,
+    image: 'https://kreo-tech.com/cdn/shop/files/IkarusW2_dd78f891-e1a9-41c3-8dff-ffafde2dde29.png?v=1753673066&width=1000',
     rating: 4,
-    reviews: 180,
+    reviews: 156,
     inStock: true,
-    description: '16-core processor with excellent gaming performance',
+    description: 'Best Mouse with Gaming Grade Sensor',
     specifications: {
-      cores: '16',
-      threads: '24',
-      baseClockSpeed: '3.4 GHz',
-      boostClockSpeed: '5.4 GHz',
-      socket: 'LGA1700',
-      tdp: '125W'
+      sensor: 'Pixart 3395 Sensor',
+      type: 'mouse',
+      battery: '30+ Hours battery life',
+      connectivity: 'BT, 2.4GHz or Wired',
+      buttons: 'Huano switches',
+      polling_rate: '1000Hz',
+      Weight: '58g'
     }
-  }
+  },
+
+  {
+    id: 10,
+    name: 'Kreo chimera',
+    brand: 'Kreo',
+    category: 'Prepherals',
+    price: 25,
+    image: 'https://kreo-tech.com/cdn/shop/files/ChimeraB2.png?v=1753673171&width=1000',
+    rating: 4,
+    reviews: 156,
+    inStock: true,
+    description: 'Best Mouse with Gaming Grade Sensor',
+    specifications: {
+      sensor: 'Pixart 3325 Sensor',
+      type: 'mouse',
+      battery: '24+ Hours battery life',
+      connectivity: 'BT, 2.4GHz or Wired',
+      buttons: 'HUANO Silent and Tactile Switches',
+      polling_rate: '1000Hz',
+      Weight: '77g'
+    }
+  },
+  //-----------------Mouse Adding End--------------------
+
+  //this is perfect for Headphones (pheripherals)
+  {
+    id: 11,
+    name: 'Cosmic Byte Proteus',
+    brand: 'Cosmic Byte',
+    category: 'Prepherals',
+    price: 24,
+    image: 'https://cdns3.thecosmicbyte.com/wp-content/uploads/0-646cbcc3ee7cf.jpg',
+    rating: 4,
+    reviews: 156,
+    inStock: true,
+    description: 'Best Mouse with Gaming Grade Sensor',
+    specifications: {
+      sensor: 'Pixart 3395 Sensor',
+      type: 'mouse',
+      battery: '30+ Hours battery life',
+      connectivity: 'BT, 2.4GHz or Wired',
+      buttons: 'Huano switches',
+      polling_rate: '1000Hz',
+      Weight: '58g'
+    }
+  },
+
+  {
+    id: 12,
+    name: ' Beluga V2 Gaming Headphones',
+    brand: 'Kreo',
+    category: 'Prepherals',
+    price: 24,
+    image: 'https://kreo-tech.com/cdn/shop/files/Artboard_3_8.png?v=1753673090&width=1000',
+    rating: 4,
+    reviews: 156,
+    inStock: true,
+    description: 'Best Mouse with Gaming Grade Sensor',
+    specifications: {
+      Driver: '53mm Driver',
+      type: 'headphone',
+      technology: 'Dual chamber',
+      connectivity: 'Wired',
+      comfort: 'Leatherette',
+      polling_rate: '1000Hz',
+      Weight: '58g'
+    }
+  },
+
 ]
 
 
@@ -217,7 +300,9 @@ export const categories = [
   'Storage',
   'Motherboards',
   'Power Supplies',
-  'Cooling'
+  'Cooling',
+  'Cabinet',
+  'Prepherals'
 ]
 
 export const brands = [
@@ -228,5 +313,9 @@ export const brands = [
   'Corsair',
   'G.Skill',
   'Samsung',
-  'Western Digital'
+  'Western Digital',
+  'ASUS',
+  'MSI',
+  'Kreo',
+  'Cosmic byte'
 ]
