@@ -17,6 +17,7 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import OrderHistory from "./pages/OrderHistory.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Forgotpassword from "./pages/Forgotpassword.jsx";
 
 //TermsAndConditions
 import TermsAndConditions from "./components/TermsAndConditions";
@@ -201,6 +202,8 @@ function App() {
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/privacy" element={<Privacypolicy />} />
             <Route path="/return" element={<Returnpolicy />} />
+            <Route path="/forgot-password" element={<Forgotpassword />} />
+
           </Routes>
         </main>
 
