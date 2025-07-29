@@ -8,6 +8,12 @@ const bcrypt = require('bcryptjs');
 var creg=require("../Model/customer/c_register")
 const clog= require('../Model/customer/c_login');
 
+//for fogot password
+const users = [
+  { id: 1, name: "Anmol", email: "anmol@example.com" },
+];
+//code end of forgot password
+
 /* GET customer listing. */
 router.get('/customer', function(req, res, next) {
   res.send('respond from customer');
@@ -63,6 +69,11 @@ router.post("/login", async(req, res)=>
     res.status(500).json({error:error.message,success:false})
   }
 });
+
+
+
+module.exports = users;
+
 
 
 module.exports = router;

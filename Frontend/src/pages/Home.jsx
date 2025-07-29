@@ -1,27 +1,7 @@
-import React from "react";
-import { Container, Row, Col, Button, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import {
-  FaShoppingBag,
-  FaMicrochip,
-  FaMemory,
-  FaHdd,
-  FaLightbulb,
-  FaDeskpro,
-  FaChessRook,
-  FaBoxOpen,
-  FaFan,
-  FaBuffer,
-  FaWindows,
-  FaBehanceSquare,
-  FaBatteryFull,
-  FaBiohazard,
-  FaBlogger,
-} from "react-icons/fa";
-
-const handleLinkClick = () => {
-  window.scrollTo({ top: 0, behavior: "auto" });
-};
+import React from 'react'
+import { Container, Row, Col, Button, Card } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { FaShoppingBag, FaMicrochip , FaMemory, FaHdd, FaLightbulb, FaDeskpro, FaChessRook, FaBoxOpen, FaFan, FaBuffer, FaWindows, FaBehanceSquare, FaBatteryFull, FaBiohazard, FaBlogger, FaBabyCarriage } from 'react-icons/fa'
 
 const Home = () => {
   return (
@@ -35,7 +15,7 @@ const Home = () => {
                 Build Your Dream PC with TechBasket
               </h1>
               <p className="lead mb-4">
-                Discover premium PC components from top brands. Quality hardware
+                Discover premium PC components from top brands. Quality hardware 
                 for enthusiasts, gamers, and professionals.
               </p>
               <Link to="/shopping">
@@ -46,7 +26,7 @@ const Home = () => {
               </Link>
             </Col>
             <Col lg={6}>
-              <img
+              <img 
                 src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=600&h=400&fit=crop"
                 alt="PC Components"
                 className="img-fluid rounded"
@@ -73,8 +53,7 @@ const Home = () => {
                 </div>
                 <Card.Title>Premium Quality</Card.Title>
                 <Card.Text>
-                  Only authentic products from trusted manufacturers with full
-                  warranty
+                  Only authentic products from trusted manufacturers with full warranty
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -118,30 +97,26 @@ const Home = () => {
           </Row>
           <Row>
             {[
-              { name: "Processors", icon: FaMicrochip, color: "primary" },
-              { name: "Graphics Cards", icon: FaMemory, color: "success" },
-              { name: "Memory", icon: FaHdd, color: "warning" },
-              { name: "Storage", icon: FaMicrochip, color: "info" },
-              { name: "Cooling", icon: FaFan, color: "warning" },
-              { name: "MotherBoard", icon: FaDeskpro, color: "primary" },
-              { name: "Power Supply", icon: FaLightbulb, color: "info" },
-              { name: "Refresh Rate", icon: FaBuffer, color: "success" },
-              { name: "RAM", icon: FaBlogger, color: "primary" },
-              { name: "Operating System", icon: FaWindows, color: "warning" },
-              { name: "Screen Size", icon: FaBehanceSquare, color: "info" },
-              { name: "Security Feature", icon: FaBiohazard, color: "success" },
+              { name: 'Processors', icon: FaMicrochip , color: 'primary' },
+              { name: 'Graphics Cards', icon: FaMemory, color: 'success' },
+              { name: 'Memory', icon: FaHdd, color: 'warning' },
+              { name: 'Storage', icon: FaMicrochip , color: 'info' },
+              { name: 'Cooling', icon: FaFan, color:'warning'},
+              { name: 'MotherBoard', icon: FaDeskpro, color: 'primary' },
+              { name: 'Power Supply', icon: FaLightbulb , color: 'info' },
+              { name: 'Cabinet', icon: FaBoxOpen , color: 'success'},
+              { name: 'Peripherals' , icon: FaBlogger , color: 'primary'}
+              
+
             ].map((category, index) => (
               <Col md={3} sm={6} key={index} className="mb-3">
                 {/* <Link to="/shopping" className="text-decoration-none"> */}
-                <Card className="text-center h-100 category-card">
-                  <Card.Body className="d-flex flex-column align-items-center">
-                    <category.icon
-                      size={32}
-                      className={`text-${category.color} mb-2`}
-                    />
-                    <Card.Title className="h5">{category.name}</Card.Title>
-                  </Card.Body>
-                </Card>
+                  <Card className="text-center h-100 category-card">
+                    <Card.Body className="d-flex flex-column align-items-center">
+                      <category.icon size={32} className={`text-${category.color} mb-2`} />
+                      <Card.Title className="h5">{category.name}</Card.Title>
+                    </Card.Body>
+                  </Card>
                 {/* </Link>  */}
               </Col>
             ))}
@@ -158,7 +133,7 @@ const Home = () => {
               Browse our extensive catalog of premium PC components
             </p>
             <Link to="/shopping">
-              <Button onClick={handleLinkClick} variant="primary" size="lg">
+              <Button variant="primary" size="lg">
                 Start Shopping
               </Button>
             </Link>
@@ -166,7 +141,7 @@ const Home = () => {
         </Row>
       </Container>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
