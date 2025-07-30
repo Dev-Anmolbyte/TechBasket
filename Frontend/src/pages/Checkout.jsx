@@ -421,11 +421,11 @@ const Checkout = () => {
                       <span className="text-success">FREE</span>
                     ) : (
                       `$ 
- ${new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(shipping * USD_TO_INR)}
+ ${new Intl.NumberFormat("en-IN", {
+   style: "currency",
+   currency: "INR",
+   maximumFractionDigits: 0,
+ }).format(shipping * USD_TO_INR)}
 </span>`
                     )}
                   </span>

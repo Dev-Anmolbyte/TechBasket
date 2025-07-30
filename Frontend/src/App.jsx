@@ -17,7 +17,6 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import OrderHistory from "./pages/OrderHistory.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-import Forgotpassword from "./pages/Forgotpassword.jsx";
 
 //TermsAndConditions
 import TermsAndConditions from "./components/TermsAndConditions";
@@ -28,7 +27,6 @@ import Privacypolicy from "./components/Privacypolicy";
 //Return Policy
 import Returnpolicy from "./components/Returnpolicy";
 import ScrollReset from "./components/scrolls/ScrollReset.jsx";
-import ContactUs from "./components/ContactUs.jsx";
 
 // Create App Context
 const AppContext = createContext();
@@ -203,9 +201,6 @@ function App() {
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/privacy" element={<Privacypolicy />} />
             <Route path="/return" element={<Returnpolicy />} />
-            <Route path="/forgot-password" element={<Forgotpassword />} />
-            <Route path="/ContactUs" element={<ContactUs/>}/>
-
           </Routes>
         </main>
 

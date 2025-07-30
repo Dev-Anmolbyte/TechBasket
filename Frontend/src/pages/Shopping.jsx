@@ -74,34 +74,33 @@ const Shopping = () => {
   };
 
   return (
-    <Container className="shopping-container py-1">
+    <Container className="shopping-container py-3">
       <Row className="mb-4">
         <Col>
-          <h1>PC Components</h1>
+          <h2 className="fw-bold">🖥 PC Components</h2>
           <p className="text-muted">Find the perfect parts for your build</p>
         </Col>
       </Row>
 
       {/* Filters Section */}
-      <Card className="category-filter mb-4">
+      <Card className="shadow-sm border-0 mb-4">
         <Card.Body>
-          <Row className="align-items-end">
+          <Row className="g-3 align-items-end">
             <Col md={3}>
-              <Form.Group>
-                <Form.Label>Search</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <FaSearch />
-                  </span>
-                  <Form.Control
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </Form.Group>
+              <Form.Label>Search</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <FaSearch />
+                </span>
+                <Form.Control
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
             </Col>
+
             <Col md={2}>
               <Form.Group>
                 <Form.Label>Category</Form.Label>
@@ -117,6 +116,7 @@ const Shopping = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
+
             <Col md={2}>
               <Form.Group>
                 <Form.Label>Brand</Form.Label>
@@ -132,6 +132,7 @@ const Shopping = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
+
             <Col md={2}>
               <Form.Group>
                 <Form.Label>Sort By</Form.Label>
@@ -146,10 +147,11 @@ const Shopping = () => {
                 </Form.Select>
               </Form.Group>
             </Col>
+
             <Col md={2}>
               <Form.Group>
                 <Form.Label>Price Range</Form.Label>
-                <div className="d-flex">
+                <div className="d-flex gap-2">
                   <Form.Control
                     type="number"
                     placeholder="Min"
@@ -162,7 +164,6 @@ const Shopping = () => {
                       }))
                     }
                   />
-                  <span className="mx-1">-</span>
                   <Form.Control
                     type="number"
                     placeholder="Max"
@@ -178,18 +179,20 @@ const Shopping = () => {
                 </div>
               </Form.Group>
             </Col>
+
             <Col md={1}>
               <Form.Check
                 type="checkbox"
                 label="In Stock"
                 checked={inStockOnly}
                 onChange={(e) => setInStockOnly(e.target.checked)}
+                className="mb-2"
               />
               <Button
                 variant="outline-secondary"
                 size="sm"
                 onClick={clearFilters}
-                className="mt-2"
+                className="w-100"
               >
                 Clear
               </Button>
@@ -217,7 +220,7 @@ const Shopping = () => {
           ))}
         </Row>
       ) : (
-        <Card className="text-center py-5">
+        <Card className="text-center py-5 border-0 shadow-sm">
           <Card.Body>
             <FaFilter size={48} className="text-muted mb-3" />
             <h4>No products found</h4>

@@ -16,7 +16,11 @@ import {
   FaCog,
 } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
-import logo from '../assets/logo/techlogo.png'
+import logo from "../assets/logo/techlogo.png";
+
+const handleLinkClick = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
 const Navbar = () => {
   const { user, cart, logout } = useAppContext();
@@ -39,38 +43,34 @@ const Navbar = () => {
       className="custom-navbar"
     >
       <Container>
-        <BsNavbar.Brand href="/">
-          <img
-            src={logo}
-            alt="TechBasket Logo"
-            style={{
-              height: "40px", // adjust as needed
-              maxHeight: "100%", // ensures it fits inside navbar
-              objectFit: "contain",
-            }}
-            className="d-inline-block align-middle"
-          />
-        </BsNavbar.Brand>
+        <img
+          src={logo}
+          alt="TechBasket Logo"
+          style={{ width: "220px", marginRight: "30px", height: "auto" }}
+        />
 
         <BsNavbar.Toggle aria-controls="basic-navbar-nav" />
 
         <BsNavbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">
+          <Nav className="ms-auto nav-links">
+            <Nav.Link as={Link} to="/" className="nav-btn">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/shopping">
+            <Nav.Link as={Link} to="/shopping" className="nav-btn">
               Shop
-            </Nav.Link>
-            <Nav.Link as={Link} to="/ContactUs">
-              contact us
             </Nav.Link>
           </Nav>
 
-          <Nav className="align-items-center">
+          <Nav className="d-flex align-items-center gap-3">
             {/* Cart */}
-            <Nav.Link as={Link} to="/cart" className="position-relative me-3">
-              <FaShoppingCart size={20} />
+            <Nav.Link
+              as={Link}
+              to="/cart"
+              className="cart-btn position-relative me-3"
+              onClick={handleLinkClick}
+            >
+              <FaShoppingCart size={20} className="me-1" />
+              <span className="cart-text"></span>
               {cartItemCount > 0 && (
                 <Badge
                   bg="danger"
@@ -125,19 +125,24 @@ const Navbar = () => {
                 </Dropdown.Menu>
               </Dropdown>
             ) : (
-              <div>
+              <Nav className="d-flex align-items-center gap-2 mt-2 mt-lg-0">
                 <Button
                   as={Link}
                   to="/login"
                   variant="outline-light"
-                  className="me-2"
+                  className="login-btn px-3"
                 >
                   Login
                 </Button>
-                <Button as={Link} to="/register" variant="light">
+                <Button
+                  as={Link}
+                  to="/register"
+                  variant="light"
+                  className="signup-btn px-3"
+                >
                   Sign Up
                 </Button>
-              </div>
+              </Nav>
             )}
           </Nav>
         </BsNavbar.Collapse>

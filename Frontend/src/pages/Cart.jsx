@@ -70,15 +70,15 @@ const Cart = () => {
   }
 
   return (
-    <Container className="py-4">
+    <Container className="main-cart-container pt-2 pb-4">
       <Row className="mb-3">
         <Col>
           <Button
-            variant="link"
-            className="p-0 mb-2"
+            variant="outline-primary"
+            className="rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 mb-3 shadow-sm border-1"
             onClick={() => navigate(-1)}
           >
-            <FaArrowLeft className="me-2" />
+            <FaArrowLeft />
             Continue Shopping
           </Button>
           <h1>Shopping Cart ({cart.length} items)</h1>
@@ -89,24 +89,27 @@ const Cart = () => {
         {/* Cart Items */}
         <Col lg={8}>
           {cart.map((item) => (
-            <Card key={item.id} className="cart-item">
+            <Card key={item.id} className="mb-3 shadow-sm border-0 rounded-4">
               <Card.Body>
                 <Row className="align-items-center">
-                  <Col md={2}>
+                  {/* Product Image */}
+                  <Col md={2} className="text-center">
                     <img
                       src={item.image}
                       alt={item.name}
                       className="img-fluid rounded"
                       style={{
                         height: "80px",
+                        width: "80px",
                         objectFit: "cover",
-                        width: "100%",
                       }}
                     />
                   </Col>
+
+                  {/* Product Details */}
                   <Col md={4}>
-                    <h6 className="mb-1">{item.name}</h6>
-                    <p className="text-muted small mb-0">
+                    <h6 className="mb-1 fw-semibold">{item.name}</h6>
+                    <p className="text-muted small mb-1">
                       {item.brand} • {item.category}
                     </p>
                     {!item.inStock && (
@@ -118,8 +121,10 @@ const Cart = () => {
                       </Alert>
                     )}
                   </Col>
-                  <Col md={2}>
-                    <div className="d-flex align-items-center">
+
+                  {/* Quantity Controls */}
+                  <Col md={3}>
+                    <div className="d-flex align-items-center justify-content-start">
                       <Button
                         variant="outline-secondary"
                         size="sm"
@@ -154,30 +159,26 @@ const Cart = () => {
                       </Button>
                     </div>
                   </Col>
-                  <Col md={2}>
-                    <div className="text-center">
-                      <div className="fw-bold">
-                        <span>
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(item.price * item.quantity * USD_TO_INR)}
-                        </span>
-                      </div>
-                      <div className="small text-muted">
-                        <span>
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(item.price * USD_TO_INR)}{" "}
-                          for each
-                        </span>
-                      </div>
+
+                  {/* Price Display */}
+                  <Col md={2} className="text-center">
+                    <div className="fw-bold text-primary">
+                      ₹{" "}
+                      {Math.round(
+                        item.price * item.quantity * USD_TO_INR
+                      ).toLocaleString("en-IN")}
+                    </div>
+                    <div className="small text-muted">
+                      ₹{" "}
+                      {Math.round(item.price * USD_TO_INR).toLocaleString(
+                        "en-IN"
+                      )}{" "}
+                      each
                     </div>
                   </Col>
-                  <Col md={2}>
+
+                  {/* Delete */}
+                  <Col md={1} className="text-end">
                     <Button
                       variant="outline-danger"
                       size="sm"
@@ -228,12 +229,12 @@ const Cart = () => {
                   {shipping === 0 ? (
                     <span className="text-success">FREE</span>
                   ) : (
-                    `$
+                    `
   ${new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
-  }).format(shipping)}`
+  }).format(shipping * USD_TO_INR)}`
                   )}
                 </span>
               </div>
@@ -253,30 +254,27 @@ const Cart = () => {
 
               {shipping > 0 && (
                 <Alert variant="info" className="py-2 px-3 mb-3 small">
-                  Add{" "}
+                  Add items worth{" "}
                   <span>
                     {new Intl.NumberFormat("en-IN", {
                       style: "currency",
                       currency: "INR",
                       maximumFractionDigits: 0,
-                    }).format(50 - subtotal)}
+                    }).format(5000 - subtotal*USD_TO_INR)}
                   </span>{" "}
                   more for free shipping!
                 </Alert>
               )}
 
               <Button
-                variant="primary"
+                className="btn-animated-primary w-100 mb-3"
                 size="lg"
-                className="w-100 mb-3"
                 onClick={handleCheckout}
               >
                 {user ? "Proceed to Checkout" : "Login to Checkout"}
               </Button>
-
               <Button
-                variant="outline-primary"
-                className="w-100"
+                className="btn-continue-shopping w-100"
                 as={Link}
                 to="/shopping"
               >

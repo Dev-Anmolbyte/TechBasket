@@ -67,14 +67,22 @@ const Login = () => {
   };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
+    <Container
+      className="my-contner py-5"
+      style={{ minHeight: "100vh", background: "#f8f9fa" }}
+    >
+      <Row
+        className="justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
         <Col md={6} lg={4}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-4">
+          <Card className="shadow-lg border-0" style={{ borderRadius: "1rem" }}>
+            <Card.Body className="p-5">
               <div className="text-center mb-4">
-                <h2>Welcome Back</h2>
-                <p className="text-muted">Sign in to your TechBasket account</p>
+                <h2 className="fw-bold text-primary">Welcome Back</h2>
+                <p className="text-muted mb-0">
+                  Sign in to your <strong>TechBasket</strong> account
+                </p>
               </div>
 
               {error && (
@@ -85,9 +93,9 @@ const Login = () => {
 
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email Address</Form.Label>
+                  <Form.Label className="fw-semibold">Email Address</Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text">
+                    <span className="input-group-text bg-light">
                       <FaUser />
                     </span>
                     <Form.Control
@@ -102,9 +110,9 @@ const Login = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label className="fw-semibold">Password</Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text">
+                    <span className="input-group-text bg-light">
                       <FaLock />
                     </span>
                     <Form.Control
@@ -118,46 +126,54 @@ const Login = () => {
                   </div>
                 </Form.Group>
 
-                <div className="mb-3">
+                <div className="mb-3 d-flex justify-content-between align-items-center">
                   <Form.Check type="checkbox" label="Remember me" />
+                  <Link
+                    to="#"
+                    className="text-decoration-none small text-primary"
+                  >
+                    Forgot Password?
+                  </Link>
                 </div>
 
                 <Button
                   variant="primary"
                   type="submit"
-                  className="w-100 mb-3"
+                  className="w-100 mb-3 fw-bold py-2"
                   disabled={loading}
+                  style={{ borderRadius: "30px", fontSize: "1rem" }}
                 >
                   {loading ? "Signing In..." : "Sign In"}
                 </Button>
-
-                <div className="text-center">
-                  <Link to="/forgot-password" className="text-decoration-none">
-                    Forgot Password?
-                  </Link>
-                </div>
               </Form>
             </Card.Body>
-            <Card.Footer className="text-center py-3">
+
+            <Card.Footer
+              className="text-center py-3 bg-light"
+              style={{ borderRadius: "0 0 1rem 1rem" }}
+            >
               <span className="text-muted">Don't have an account? </span>
-              <Link to="/register" className="text-decoration-none">
+              <Link
+                to="/register"
+                className="fw-semibold text-decoration-none text-primary"
+              >
                 Sign Up
               </Link>
             </Card.Footer>
           </Card>
 
-          {/* Demo credentials info */}
-          {/* <Card className="mt-3 border-info">
-            <Card.Body className="p-3">
-              <h6 className="text-info mb-2">Demo Credentials:</h6>
-              <small className="text-muted d-block">
-                Admin: admin@techbasket.com / admin123
-              </small>
-              <small className="text-muted d-block">
-                Customer: any email / any password
-              </small>
-            </Card.Body>
-          </Card> */}
+          {/* Optional: Demo credentials card */}
+          {/* <Card className="mt-3 border-info shadow-sm">
+        <Card.Body className="p-3">
+          <h6 className="text-info mb-2">Demo Credentials:</h6>
+          <small className="text-muted d-block">
+            Admin: admin@techbasket.com / admin123
+          </small>
+          <small className="text-muted d-block">
+            Customer: any email / any password
+          </small>
+        </Card.Body>
+      </Card> */}
         </Col>
       </Row>
     </Container>

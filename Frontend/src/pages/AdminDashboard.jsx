@@ -15,7 +15,7 @@ import {
 import {
   FaUsers,
   FaShoppingCart,
-  FaDollarSign,
+  FaRupeeSign,
   FaBox,
   FaPlus,
   FaEdit,
@@ -25,10 +25,11 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../App.jsx";
 import { products as initialProducts } from "../data/products.js";
 
+const USD_TO_INR = 83.5;
+
 const AdminDashboard = () => {
   const { user, orders } = useAppContext();
   const navigate = useNavigate();
-
 
   const [products, setProducts] = useState(initialProducts);
   const [showProductModal, setShowProductModal] = useState(false);
@@ -163,8 +164,14 @@ const AdminDashboard = () => {
         <Col md={3}>
           <Card className="text-center admin-stat-card">
             <Card.Body>
-              <FaDollarSign size={32} className="text-success mb-2" />
-              <h3 className="mb-0">₹{totalRevenue.toFixed(2)}</h3>
+              <FaRupeeSign size={32} className="text-success mb-2" />
+              <h3 className="mb-0">
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(totalRevenue * USD_TO_INR)}
+                        </h3>
               <p className="text-muted mb-0">Total Revenue</p>
             </Card.Body>
           </Card>
@@ -240,7 +247,13 @@ const AdminDashboard = () => {
                             {new Date(order.orderDate).toLocaleDateString()}
                           </td>
                           <td>{order.items.length}</td>
-                          <td className="fw-bold">${orderTotal.toFixed(2)}</td>
+                          <td className="fw-bold">
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(orderTotal * USD_TO_INR)}
+                        </td>
                           <td>
                             <span
                               className={`badge bg-${getOrderStatusColor(
@@ -313,7 +326,13 @@ const AdminDashboard = () => {
                       <td>{product.name}</td>
                       <td>{product.brand}</td>
                       <td>{product.category}</td>
-                      <td className="fw-bold">${product.price}</td>
+                      <td className="fw-bold">
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(product.price * USD_TO_INR)}
+                        </td>
                       <td>
                         <span
                           className={`badge bg-${

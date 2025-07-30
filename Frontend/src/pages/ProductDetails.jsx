@@ -50,9 +50,7 @@ const ProductDetails = () => {
   // };
 
   const handleAddToCart = () => {
-    if (!isInCart) {
-      addToCart({ ...product, quantity });
-    }
+    addToCart(product, quantity);
   };
 
   const handleQuantityChange = (e) => {
@@ -62,26 +60,33 @@ const ProductDetails = () => {
     }
   };
 
+  // Everything before return() remains unchanged
+
   return (
-    <Container className="py-4">
+    <Container className="my-con py-4">
       {/* Breadcrumb */}
       <Row className="mb-3">
         <Col>
           <Button
-            variant="link"
-            className="p-0 mb-2"
+            variant="outline-primary"
+            className="px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center back-button-hover"
             onClick={() => navigate(-1)}
+            style={{
+              fontWeight: "500",
+              transition: "all 0.3s ease",
+              gap: "8px",
+            }}
           >
-            <FaArrowLeft className="me-2" />
-            Back
+            <FaArrowLeft />
+            Back to Products
           </Button>
         </Col>
       </Row>
 
-      <Row>
+      <Row className="g-4">
         {/* Product Image */}
         <Col md={6}>
-          <Card>
+          <Card className="shadow-sm">
             <Card.Img
               variant="top"
               src={product.image}
@@ -92,16 +97,14 @@ const ProductDetails = () => {
 
         {/* Product Info */}
         <Col md={6}>
-          <div className="mb-2">
+          <div className="mb-3 d-flex gap-2">
             <Badge bg="secondary">{product.category}</Badge>
-            <Badge bg="info" className="ms-2">
-              {product.brand}
-            </Badge>
+            <Badge bg="info">{product.brand}</Badge>
           </div>
 
-          <h1 className="mb-3">{product.name}</h1>
+          <h2 className="fw-bold mb-3">{product.name}</h2>
 
-          <div className="mb-3">
+          <div className="mb-3 d-flex align-items-center">
             {[...Array(5)].map((_, i) => (
               <FaStar
                 key={i}
@@ -114,15 +117,15 @@ const ProductDetails = () => {
             </span>
           </div>
 
-          <h2 className="price-tag mb-4">
+          <h3 className="text-primary fw-semibold mb-4">
             {new Intl.NumberFormat("en-IN", {
               style: "currency",
               currency: "INR",
               maximumFractionDigits: 0,
             }).format(product.price * USD_TO_INR * quantity)}
-          </h2>
+          </h3>
 
-          <p className="mb-4">{product.description}</p>
+          <p className="mb-4 text-muted">{product.description}</p>
 
           {/* Stock Status */}
           <div className="mb-4">
@@ -138,44 +141,43 @@ const ProductDetails = () => {
           </div>
 
           {/* Quantity and Add to Cart */}
-
           <Row className="mb-4">
             <Col sm={4}>
               <Form.Group>
                 <Form.Label>Quantity</Form.Label>
                 <Form.Control
                   type="number"
-                  min="1"
+                  min={1}
                   value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  onChange={handleQuantityChange}
                   disabled={!product.inStock}
                 />
               </Form.Group>
             </Col>
-            <Col sm={8} className="d-flex align-items-end">
+            <Col sm={8} className="d-flex align-items-end gap-2 mt-3 mt-sm-0">
               <Button
                 variant={isInCart ? "success" : "primary"}
                 size="lg"
                 disabled={isInCart || !product.inStock}
                 onClick={handleAddToCart}
-                className="me-2 flex-fill"
+                className="flex-fill"
               >
                 <FaShoppingCart className="me-2" />
                 {isInCart ? "Added to Cart" : "Add to Cart"}
               </Button>
-              <Button variant="outline-secondary" size="lg">
+              <Button variant="outline-danger" size="lg">
                 <FaHeart />
               </Button>
-              <Button variant="outline-secondary" size="lg" className="ms-2">
+              <Button variant="outline-secondary" size="lg">
                 <FaShare />
               </Button>
             </Col>
           </Row>
 
           {/* Additional Info */}
-          <Card className="bg-light">
+          <Card className="bg-light border-0 shadow-sm">
             <Card.Body>
-              <h6>Why Buy From TechBasket?</h6>
+              <h6 className="fw-bold">Why Buy From TechBasket?</h6>
               <ul className="mb-0 small">
                 <li>✓ Free shipping on orders over ₹5000</li>
                 <li>✓ 30-day return policy</li>
@@ -196,7 +198,7 @@ const ProductDetails = () => {
             className="mb-3"
           >
             <Tab eventKey="specifications" title="Specifications">
-              <Card>
+              <Card className="shadow-sm">
                 <Card.Body>
                   <Row>
                     {Object.entries(product.specifications).map(
@@ -218,17 +220,13 @@ const ProductDetails = () => {
             </Tab>
 
             <Tab eventKey="reviews" title="Reviews">
-              <Card>
+              <Card className="shadow-sm">
                 <Card.Body>
-                  <h5>Customer Reviews</h5>
+                  <h5 className="fw-semibold">Customer Reviews</h5>
                   <div className="mb-3">
                     <div className="d-flex align-items-center mb-2">
                       {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          className={i < 5 ? "text-warning" : "text-muted"}
-                          size={16}
-                        />
+                        <FaStar key={i} className="text-warning" size={16} />
                       ))}
                       <span className="ms-2">
                         <strong>John D.</strong> - Verified Purchase
@@ -242,13 +240,10 @@ const ProductDetails = () => {
                   <hr />
                   <div className="mb-3">
                     <div className="d-flex align-items-center mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <FaStar
-                          key={i}
-                          className={i < 4 ? "text-warning" : "text-muted"}
-                          size={16}
-                        />
+                      {[...Array(4)].map((_, i) => (
+                        <FaStar key={i} className="text-warning" size={16} />
                       ))}
+                      <FaStar className="text-muted" size={16} />
                       <span className="ms-2">
                         <strong>Sarah M.</strong> - Verified Purchase
                       </span>
@@ -263,9 +258,9 @@ const ProductDetails = () => {
             </Tab>
 
             <Tab eventKey="shipping" title="Shipping & Returns">
-              <Card>
+              <Card className="shadow-sm">
                 <Card.Body>
-                  <h5>Shipping Information</h5>
+                  <h5 className="fw-semibold">Shipping Information</h5>
                   <ul>
                     <li>Free standard shipping on orders over ₹5000</li>
                     <li>Express shipping available for ₹860</li>
@@ -273,7 +268,7 @@ const ProductDetails = () => {
                     <li>Tracking information provided via email</li>
                   </ul>
 
-                  <h5 className="mt-4">Return Policy</h5>
+                  <h5 className="mt-4 fw-semibold">Return Policy</h5>
                   <ul>
                     <li>30-day return window</li>
                     <li>Items must be in original condition</li>

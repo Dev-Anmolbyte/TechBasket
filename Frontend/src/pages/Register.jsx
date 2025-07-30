@@ -77,14 +77,22 @@ const Register = () => {
   };
 
   return (
-    <Container className="py-5">
-      <Row className="justify-content-center">
+    <Container
+      className="my-contner py-5"
+      style={{ minHeight: "100vh", backgroundColor: "#f8f9fa" }}
+    >
+      <Row
+        className="justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
+      >
         <Col md={8} lg={6}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-4">
+          <Card className="shadow-lg border-0" style={{ borderRadius: "1rem" }}>
+            <Card.Body className="p-5">
               <div className="text-center mb-4">
-                <h2>Create Account</h2>
-                <p className="text-muted">Join TechBasket today</p>
+                <h2 className="fw-bold text-primary">Create Account</h2>
+                <p className="text-muted mb-0">
+                  Join <strong>TechBasket</strong> today
+                </p>
               </div>
 
               {error && (
@@ -97,9 +105,11 @@ const Register = () => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>First Name</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        First Name
+                      </Form.Label>
                       <div className="input-group">
-                        <span className="input-group-text">
+                        <span className="input-group-text bg-light">
                           <FaUser />
                         </span>
                         <Form.Control
@@ -115,9 +125,9 @@ const Register = () => {
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Last Name</Form.Label>
+                      <Form.Label className="fw-semibold">Last Name</Form.Label>
                       <div className="input-group">
-                        <span className="input-group-text">
+                        <span className="input-group-text bg-light">
                           <FaUser />
                         </span>
                         <Form.Control
@@ -134,9 +144,9 @@ const Register = () => {
                 </Row>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Email Address</Form.Label>
+                  <Form.Label className="fw-semibold">Email Address</Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text">
+                    <span className="input-group-text bg-light">
                       <FaEnvelope />
                     </span>
                     <Form.Control
@@ -151,9 +161,9 @@ const Register = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Phone Number</Form.Label>
+                  <Form.Label className="fw-semibold">Phone Number</Form.Label>
                   <div className="input-group">
-                    <span className="input-group-text">
+                    <span className="input-group-text bg-light">
                       <FaPhone />
                     </span>
                     <Form.Control
@@ -169,9 +179,9 @@ const Register = () => {
                 <Row>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Password</Form.Label>
+                      <Form.Label className="fw-semibold">Password</Form.Label>
                       <div className="input-group">
-                        <span className="input-group-text">
+                        <span className="input-group-text bg-light">
                           <FaLock />
                         </span>
                         <Form.Control
@@ -187,9 +197,11 @@ const Register = () => {
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Confirm Password</Form.Label>
+                      <Form.Label className="fw-semibold">
+                        Confirm Password
+                      </Form.Label>
                       <div className="input-group">
-                        <span className="input-group-text">
+                        <span className="input-group-text bg-light">
                           <FaLock />
                         </span>
                         <Form.Control
@@ -215,6 +227,7 @@ const Register = () => {
                           to="/terms"
                           target="_blank"
                           rel="noopener noreferrer"
+                          className="text-primary"
                         >
                           Terms and Conditions
                         </Link>
@@ -227,16 +240,23 @@ const Register = () => {
                 <Button
                   variant="primary"
                   type="submit"
-                  className="w-100 mb-3"
+                  className="w-100 mb-3 fw-bold py-2"
                   disabled={loading}
+                  style={{ borderRadius: "30px", fontSize: "1rem" }}
                 >
                   {loading ? "Creating Account..." : "Create Account"}
                 </Button>
               </Form>
             </Card.Body>
-            <Card.Footer className="text-center py-3">
+            <Card.Footer
+              className="text-center py-3 bg-light"
+              style={{ borderRadius: "0 0 1rem 1rem" }}
+            >
               <span className="text-muted">Already have an account? </span>
-              <Link to="/login" className="text-decoration-none">
+              <Link
+                to="/login"
+                className="fw-semibold text-decoration-none text-primary"
+              >
                 Sign In
               </Link>
             </Card.Footer>
