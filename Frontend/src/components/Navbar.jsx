@@ -59,6 +59,9 @@ const Navbar = () => {
             <Nav.Link as={Link} to="/shopping" className="nav-btn">
               Shop
             </Nav.Link>
+            <Nav.Link as={Link} to="/contactus" className="nav-btn">
+              Contact us
+            </Nav.Link>
           </Nav>
 
           <Nav className="d-flex align-items-center gap-3">
