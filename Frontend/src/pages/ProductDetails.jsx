@@ -24,6 +24,9 @@ import { products } from "../data/products.js";
 const USD_TO_INR = 83.5;
 
 const ProductDetails = () => {
+
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [showHeartBubble, setShowHeartBubble] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart, cart } = useAppContext();
@@ -51,6 +54,12 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
+  };
+
+  const handleWishlistToggle = () => {
+    setIsWishlisted(!isWishlisted);
+    setShowHeartBubble(true);
+    setTimeout(() => setShowHeartBubble(false), 600); // Hide bubble after animation
   };
 
   const handleQuantityChange = (e) => {
@@ -165,9 +174,20 @@ const ProductDetails = () => {
                 <FaShoppingCart className="me-2" />
                 {isInCart ? "Added to Cart" : "Add to Cart"}
               </Button>
-              <Button variant="outline-danger" size="lg">
-                <FaHeart />
-              </Button>
+              <div style={{ position: "relative" }}>
+                <Button
+                  variant={isWishlisted ? "danger" : "outline-danger"}
+                  size="lg"
+                  onClick={handleWishlistToggle}
+                >
+                  <FaHeart />
+                </Button>
+                {showHeartBubble && (
+                  <div className="heart-bubble">
+                    <FaHeart />
+                  </div>
+                )}
+              </div>
               <Button variant="outline-secondary" size="lg">
                 <FaShare />
               </Button>
