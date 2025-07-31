@@ -20,16 +20,18 @@ import {
 } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
 import { products } from "../data/products.js";
+import { useEffect } from "react";
 
 const USD_TO_INR = 83.5;
 
 const ProductDetails = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showHeartBubble, setShowHeartBubble] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, cart } = useAppContext();
+  const { addToCart, removeFromCart, cart } = useAppContext();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("specifications");
 
@@ -54,12 +56,6 @@ const ProductDetails = () => {
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
-  };
-
-  const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted);
-    setShowHeartBubble(true);
-    setTimeout(() => setShowHeartBubble(false), 600); // Hide bubble after animation
   };
 
   const handleQuantityChange = (e) => {
@@ -163,34 +159,51 @@ const ProductDetails = () => {
                 />
               </Form.Group>
             </Col>
-            <Col sm={8} className="d-flex align-items-end gap-2 mt-3 mt-sm-0">
+            <Col sm={8} className="d-flex flex-column gap-2 mt-3 mt-sm-0 ">
               <Button
-                variant={isInCart ? "success" : "primary"}
+                variant="warning"
                 size="lg"
-                disabled={isInCart || !product.inStock}
-                onClick={handleAddToCart}
-                className="flex-fill"
+                className="rounded w-100"
+                disabled={!product.inStock}
+                onClick={() =>
+                  navigate("/checkout", {
+                    state: { product, quantity },
+                  })
+                }
+              >
+                Buy Now
+              </Button>
+
+              <Button
+                variant={isInCart ? "danger" : "primary"}
+                size="lg"
+                onClick={() =>
+                  isInCart ? removeFromCart(product.id) : handleAddToCart()
+                }
+                className="rounded w-100"
+                disabled={!product.inStock}
               >
                 <FaShoppingCart className="me-2" />
-                {isInCart ? "Added to Cart" : "Add to Cart"}
+                {isInCart ? "Remove from Cart" : "Add to Cart"}
               </Button>
-              <div style={{ position: "relative" }}>
+
+              <div className="d-flex gap-2">
                 <Button
-                  variant={isWishlisted ? "danger" : "outline-danger"}
+                  variant="outline-danger"
                   size="lg"
-                  onClick={handleWishlistToggle}
+                  className="flex-fill rounded"
                 >
                   <FaHeart />
+                  
                 </Button>
-                {showHeartBubble && (
-                  <div className="heart-bubble">
-                    <FaHeart />
-                  </div>
-                )}
+                <Button
+                  variant="outline-secondary"
+                  size="lg"
+                  className="flex-fill rounded"
+                >
+                  <FaShare />
+                </Button>
               </div>
-              <Button variant="outline-secondary" size="lg">
-                <FaShare />
-              </Button>
             </Col>
           </Row>
 

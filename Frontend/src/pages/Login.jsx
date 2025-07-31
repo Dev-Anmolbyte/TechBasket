@@ -11,12 +11,19 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
+import { useEffect } from "react";
+
+//login button name updation
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+      window.scrollTo({ top: 50, behavior: "smooth" });
+    }, []);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,35 +37,48 @@ const Login = () => {
     });
   };
 
+  //changed
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      // Simulate login logic (in real app, this would be an API call)
+      const email = formData.email;
+      let name = "Customer";
+
+      if (email) {
+        const emailName = email.split("@")[0];
+        const cleanName = emailName.replace(/[^a-zA-Z]/g, "");
+        name =
+          cleanName.charAt(0).toUpperCase() + cleanName.slice(1).toLowerCase();
+      }
+
       if (
-        formData.email === "admin@techbasket.com" &&
+        email === "admin@techbasket.com" &&
         formData.password === "admin123"
       ) {
         login({
           id: 1,
           name: "Admin User",
-          email: formData.email,
+          email,
           role: "admin",
         });
-      } else if (formData.email && formData.password) {
+      } else if (email && formData.password) {
         login({
           id: 2,
-          name: "John Doe",
-          email: formData.email,
+          name: name,
+          email,
           role: "customer",
         });
       } else {
         throw new Error("Please fill in all fields");
       }
 
-      navigate("/");
+      // 🔁 NEW: Handle post-login redirect
+      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+      localStorage.removeItem("redirectAfterLogin");
+      navigate(redirectPath);
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {

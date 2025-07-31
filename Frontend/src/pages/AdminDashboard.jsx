@@ -151,7 +151,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <Container fluid className="py-4">
+    <Container fluid className="my-admin py-4">
       <Row className="mb-4">
         <Col>
           <h1>Admin Dashboard</h1>
@@ -162,44 +162,44 @@ const AdminDashboard = () => {
       {/* Stats Cards */}
       <Row className="mb-4">
         <Col md={3}>
-          <Card className="text-center admin-stat-card">
+          <Card className="text-center admin-stat-card bg-gradient-revenue">
             <Card.Body>
-              <FaRupeeSign size={32} className="text-success mb-2" />
+              <FaRupeeSign size={32} className="mb-2" />
               <h3 className="mb-0">
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(totalRevenue * USD_TO_INR)}
-                        </h3>
-              <p className="text-muted mb-0">Total Revenue</p>
+                {new Intl.NumberFormat("en-IN", {
+                  style: "currency",
+                  currency: "INR",
+                  maximumFractionDigits: 0,
+                }).format(totalRevenue * USD_TO_INR)}
+              </h3>
+              <p className="mb-0">Total Revenue</p>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="text-center admin-stat-card">
+          <Card className="text-center admin-stat-card bg-gradient-orders">
             <Card.Body>
-              <FaShoppingCart size={32} className="text-primary mb-2" />
+              <FaShoppingCart size={32} className="mb-2" />
               <h3 className="mb-0">{totalOrders}</h3>
-              <p className="text-muted mb-0">Total Orders</p>
+              <p className="mb-0">Total Orders</p>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="text-center admin-stat-card">
+          <Card className="text-center admin-stat-card bg-gradient-customers">
             <Card.Body>
-              <FaUsers size={32} className="text-info mb-2" />
+              <FaUsers size={32} className="mb-2" />
               <h3 className="mb-0">{totalCustomers}</h3>
-              <p className="text-muted mb-0">Customers</p>
+              <p className="mb-0">Customers</p>
             </Card.Body>
           </Card>
         </Col>
         <Col md={3}>
-          <Card className="text-center admin-stat-card">
+          <Card className="text-center admin-stat-card bg-gradient-products">
             <Card.Body>
-              <FaBox size={32} className="text-warning mb-2" />
+              <FaBox size={32} className="mb-2" />
               <h3 className="mb-0">{totalProducts}</h3>
-              <p className="text-muted mb-0">Products</p>
+              <p className="mb-0">Products</p>
             </Card.Body>
           </Card>
         </Col>
@@ -248,12 +248,12 @@ const AdminDashboard = () => {
                           </td>
                           <td>{order.items.length}</td>
                           <td className="fw-bold">
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(orderTotal * USD_TO_INR)}
-                        </td>
+                            {new Intl.NumberFormat("en-IN", {
+                              style: "currency",
+                              currency: "INR",
+                              maximumFractionDigits: 0,
+                            }).format(orderTotal * USD_TO_INR)}
+                          </td>
                           <td>
                             <span
                               className={`badge bg-${getOrderStatusColor(
@@ -265,7 +265,11 @@ const AdminDashboard = () => {
                             </span>
                           </td>
                           <td>
-                            <Button variant="outline-primary" size="sm">
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              className="btn-view"
+                            >
                               View Details
                             </Button>
                           </td>
@@ -315,28 +319,23 @@ const AdminDashboard = () => {
                         <img
                           src={product.image}
                           alt={product.name}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            objectFit: "cover",
-                          }}
-                          className="rounded"
+                          className="product-thumb"
                         />
                       </td>
                       <td>{product.name}</td>
                       <td>{product.brand}</td>
                       <td>{product.category}</td>
                       <td className="fw-bold">
-                          {new Intl.NumberFormat("en-IN", {
-                            style: "currency",
-                            currency: "INR",
-                            maximumFractionDigits: 0,
-                          }).format(product.price * USD_TO_INR)}
-                        </td>
+                        {new Intl.NumberFormat("en-IN", {
+                          style: "currency",
+                          currency: "INR",
+                          maximumFractionDigits: 0,
+                        }).format(product.price * USD_TO_INR)}
+                      </td>
                       <td>
                         <span
-                          className={`badge bg-${
-                            product.inStock ? "success" : "danger"
+                          className={`badge ${
+                            product.inStock ? "badge-success" : "badge-danger"
                           }`}
                         >
                           {product.inStock ? "In Stock" : "Out of Stock"}
@@ -346,7 +345,7 @@ const AdminDashboard = () => {
                         <Button
                           variant="outline-primary"
                           size="sm"
-                          className="me-2"
+                          className="me-2 table-action-btn"
                           onClick={() => handleEditProduct(product)}
                         >
                           <FaEdit />
@@ -354,6 +353,7 @@ const AdminDashboard = () => {
                         <Button
                           variant="outline-danger"
                           size="sm"
+                          className="table-action-btn"
                           onClick={() => handleDeleteProduct(product.id)}
                         >
                           <FaTrash />

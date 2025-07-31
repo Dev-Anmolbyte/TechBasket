@@ -18,12 +18,17 @@ import {
   FaBiohazard,
   FaBlogger,
 } from "react-icons/fa";
+import { useEffect } from "react";
 
 const handleLinkClick = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 const Home = () => {
+  //scroll
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <div>
       {/* Hero Section */}
@@ -39,7 +44,11 @@ const Home = () => {
                 for enthusiasts, gamers, and professionals.
               </p>
               <Link to="/shopping">
-                <Button variant="light" size="lg" className="me-3">
+                <Button
+                  variant="light"
+                  size="lg"
+                  className="me-3 shadow-sm shop-now-btn"
+                >
                   <FaShoppingBag className="me-2" />
                   Shop Now
                 </Button>
@@ -116,36 +125,31 @@ const Home = () => {
               <h2>Shop by Category</h2>
             </Col>
           </Row>
-          <Row>
-            {[
-              { name: "Processors", icon: FaMicrochip, color: "primary" },
-              { name: "Graphics Cards", icon: FaMemory, color: "success" },
-              { name: "Memory", icon: FaHdd, color: "warning" },
-              { name: "Storage", icon: FaMicrochip, color: "info" },
-              { name: "Cooling", icon: FaFan, color: "warning" },
-              { name: "MotherBoard", icon: FaDeskpro, color: "primary" },
-              { name: "Power Supply", icon: FaLightbulb, color: "info" },
-              { name: "Refresh Rate", icon: FaBuffer, color: "success" },
-              { name: "RAM", icon: FaBlogger, color: "primary" },
-              { name: "Operating System", icon: FaWindows, color: "warning" },
-              { name: "Screen Size", icon: FaBehanceSquare, color: "info" },
-              { name: "Security Feature", icon: FaBiohazard, color: "success" },
-            ].map((category, index) => (
-              <Col md={3} sm={6} key={index} className="mb-3">
-                {/* <Link to="/shopping" className="text-decoration-none"> */}
-                <Card className="text-center h-100 category-card">
-                  <Card.Body className="d-flex flex-column align-items-center">
-                    <category.icon
-                      size={32}
-                      className={`text-${category.color} mb-2`}
-                    />
-                    <Card.Title className="h5">{category.name}</Card.Title>
-                  </Card.Body>
-                </Card>
-                {/* </Link>  */}
-              </Col>
-            ))}
-          </Row>
+          <Row className="justify-content-center">
+  {[
+    { name: "Processors", icon: FaMicrochip, color: "primary" },
+    { name: "Graphics Cards", icon: FaMemory, color: "success" },
+    { name: "Memory", icon: FaHdd, color: "warning" },
+    { name: "Storage", icon: FaMicrochip, color: "info" },
+    { name: "Cooling", icon: FaFan, color: "warning" },
+    { name: "MotherBoard", icon: FaDeskpro, color: "primary" },
+    { name: "Power Supply", icon: FaLightbulb, color: "info" },
+    { name: "Cabinet", icon: FaBuffer, color: "success" },
+    { name: "Peripherals", icon: FaBlogger, color: "primary" },
+  ].map((category, index) => (
+    <Col md={3} sm={6} key={index} className="mb-3">
+      <Card className="text-center h-100 category-card">
+        <Card.Body className="d-flex flex-column align-items-center">
+          <category.icon
+            size={32}
+            className={`text-${category.color} mb-2`}
+          />
+          <Card.Title className="h5">{category.name}</Card.Title>
+        </Card.Body>
+      </Card>
+    </Col>
+  ))}
+</Row>
         </Container>
       </section>
 
@@ -158,7 +162,12 @@ const Home = () => {
               Browse our extensive catalog of premium PC components
             </p>
             <Link to="/shopping">
-              <Button onClick={handleLinkClick} variant="primary" size="lg">
+              <Button
+                onClick={handleLinkClick}
+                variant="primary"
+                size="lg"
+                className="start-shopping-btn"
+              >
                 Start Shopping
               </Button>
             </Link>

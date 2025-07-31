@@ -16,11 +16,16 @@ import {
   FaShoppingBag,
   FaArrowLeft,
 } from "react-icons/fa";
+import { useEffect } from "react";
 import { useAppContext } from "../App.jsx";
 
 const USD_TO_INR = 83.5;
 
 const Cart = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const { cart, updateCartQuantity, removeFromCart, user } = useAppContext();
   const navigate = useNavigate();
 
@@ -42,6 +47,7 @@ const Cart = () => {
 
   const handleCheckout = () => {
     if (!user) {
+      localStorage.setItem("redirectAfterLogin", "/checkout");
       navigate("/login");
       return;
     }
@@ -260,7 +266,7 @@ const Cart = () => {
                       style: "currency",
                       currency: "INR",
                       maximumFractionDigits: 0,
-                    }).format(5000 - subtotal*USD_TO_INR)}
+                    }).format(5000 - subtotal * USD_TO_INR)}
                   </span>{" "}
                   more for free shipping!
                 </Alert>
