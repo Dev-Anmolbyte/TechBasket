@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -8,15 +8,23 @@ import {
   Button,
   Alert,
 } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FaCreditCard, FaLock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
+import { Link } from "react-router-dom";
+import "../styles.css";
 
 const USD_TO_INR = 83.5;
 
 const Checkout = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const { cart, user, addOrder } = useAppContext();
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const singleProduct = state?.product;
 
   const [billingInfo, setBillingInfo] = useState({
     firstName: user?.name?.split(" ")[0] || "",
@@ -27,7 +35,7 @@ const Checkout = () => {
     city: "",
     state: "",
     zipCode: "",
-    country: "United States",
+    country: "India",
   });
 
   const [paymentInfo, setPaymentInfo] = useState({
@@ -40,7 +48,14 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const subtotal = cart.reduce(
+  const passedQuantity =
+    state?.quantity && state.quantity > 0 ? state.quantity : 1;
+
+  const items = singleProduct
+    ? [{ ...singleProduct, quantity: passedQuantity }]
+    : cart;
+
+  const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
@@ -68,7 +83,6 @@ const Checkout = () => {
     setError("");
 
     try {
-      // Validate required fields
       const requiredFields = [
         "firstName",
         "lastName",
@@ -95,11 +109,10 @@ const Checkout = () => {
         throw new Error("Please fill in all payment information");
       }
 
-      // Simulate order processing
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const orderData = {
-        items: cart,
+        items,
         billingInfo,
         paymentInfo: {
           ...paymentInfo,
@@ -114,7 +127,7 @@ const Checkout = () => {
       };
 
       addOrder(orderData);
-      navigate("/orders");
+      navigate("/my-orders");
     } catch (err) {
       setError(err.message || "Order processing failed. Please try again.");
     } finally {
@@ -127,13 +140,13 @@ const Checkout = () => {
     return null;
   }
 
-  if (cart.length === 0) {
+  if (!singleProduct && cart.length === 0) {
     navigate("/cart");
     return null;
   }
 
   return (
-    <Container className="py-4">
+    <Container className="my-contner py-4">
       <Row className="mb-3">
         <Col>
           <h1>Checkout</h1>
@@ -149,15 +162,12 @@ const Checkout = () => {
 
       <Form onSubmit={handleSubmit}>
         <Row>
-          {/* Shipping & Payment */}
           <Col lg={8}>
             {/* Shipping Information */}
             <Card className="mb-4">
-              <Card.Header>
-                <h5 className="mb-0">
-                  <FaMapMarkerAlt className="me-2" />
-                  Shipping Information
-                </h5>
+              <Card.Header className="d-flex align-items-center">
+                <FaMapMarkerAlt className="me-2 text-primary" />
+                <h5 className="mb-0">Shipping Information</h5>
               </Card.Header>
               <Card.Body>
                 <Row>
@@ -268,11 +278,9 @@ const Checkout = () => {
 
             {/* Payment Information */}
             <Card className="mb-4">
-              <Card.Header>
-                <h5 className="mb-0">
-                  <FaCreditCard className="me-2" />
-                  Payment Information
-                </h5>
+              <Card.Header className="d-flex align-items-center">
+                <FaCreditCard className="me-2 text-primary" />
+                <h5 className="mb-0">Payment Information</h5>
               </Card.Header>
               <Card.Body>
                 <Form.Group className="mb-3">
@@ -359,32 +367,37 @@ const Checkout = () => {
               className="cart-summary position-sticky"
               style={{ top: "100px" }}
             >
-              <Card.Header>
+              <Card.Header className="text-dark fw-semibold">
                 <h5 className="mb-0">Order Summary</h5>
               </Card.Header>
               <Card.Body>
-                {/* Items */}
                 <div className="mb-3">
-                  {cart.map((item) => (
-                    <div
-                      key={item.id}
-                      className="d-flex justify-content-between mb-2"
-                    >
-                      <div className="flex-grow-1">
-                        <div className="fw-bold small">{item.name}</div>
-                        <div className="text-muted small">
-                          Qty: {item.quantity}
+                  {items.map((item) => (
+                    <div key={item.id} className="order-item-container">
+                      <div className="d-flex justify-content-between">
+                        <div className="flex-grow-1">
+                          <div className="fw-semibold text-dark small">
+                            {item.name}
+                          </div>
+                          <div className="text-muted small">
+                            Qty: {item.quantity}
+                          </div>
+                          <Link
+                            to={`/product/${item.id}`}
+                            className="order-item-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {" "}
+                            View Details →
+                          </Link>
                         </div>
-                      </div>
-                      <div className="text-end">
-                        <div className="fw-bold">
-                          <span>
-                            {new Intl.NumberFormat("en-IN", {
-                              style: "currency",
-                              currency: "INR",
-                              maximumFractionDigits: 0,
-                            }).format(item.price * item.quantity * USD_TO_INR)}
-                          </span>
+                        <div className="text-end fw-bold">
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(item.price * item.quantity * USD_TO_INR)}
                         </div>
                       </div>
                     </div>
@@ -392,8 +405,6 @@ const Checkout = () => {
                 </div>
 
                 <hr />
-
-                {/* Totals */}
                 <div className="d-flex justify-content-between mb-2">
                   <span>Subtotal:</span>
                   <span>
@@ -420,13 +431,11 @@ const Checkout = () => {
                     {shipping === 0 ? (
                       <span className="text-success">FREE</span>
                     ) : (
-                      `$ 
- ${new Intl.NumberFormat("en-IN", {
-   style: "currency",
-   currency: "INR",
-   maximumFractionDigits: 0,
- }).format(shipping * USD_TO_INR)}
-</span>`
+                      new Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "INR",
+                        maximumFractionDigits: 0,
+                      }).format(shipping * USD_TO_INR)
                     )}
                   </span>
                 </div>
@@ -434,13 +443,11 @@ const Checkout = () => {
                 <div className="d-flex justify-content-between mb-3">
                   <strong>Total:</strong>
                   <strong className="price-tag">
-                    <span>
-                      {new Intl.NumberFormat("en-IN", {
-                        style: "currency",
-                        currency: "INR",
-                        maximumFractionDigits: 0,
-                      }).format(total * USD_TO_INR)}
-                    </span>
+                    {new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(total * USD_TO_INR)}
                   </strong>
                 </div>
 

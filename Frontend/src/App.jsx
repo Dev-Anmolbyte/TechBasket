@@ -6,6 +6,8 @@ import "./styles.css";
 // Components
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
+import ScrollReset from "./components/scrolls/ScrollReset.jsx";
+import ScrollToTop from "./components/scrolls/ScrollToTop.jsx";
 
 // Pages
 import Home from "./pages/Home.jsx";
@@ -17,10 +19,8 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import OrderHistory from "./pages/OrderHistory.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-
-//components
-import ScrollReset from "./components/scrolls/ScrollReset.jsx";
-import ContactUs from "./components/contactUs.jsx";
+import MyOrders from "./pages/MyOrders.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
 
 //TermsAndConditions
 import TermsAndConditions from "./components/TermsAndConditions";
@@ -191,9 +191,12 @@ function App() {
 
         <main className={hideNavbarFooter ? "" : "main-content"}>
           <ScrollReset />
+          <ScrollToTop />
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/shopping" element={<Shopping />} />
+            <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/product/:id" element={<ProductDetails />} />
@@ -204,7 +207,7 @@ function App() {
             <Route path="/terms" element={<TermsAndConditions />} />
             <Route path="/privacy" element={<Privacypolicy />} />
             <Route path="/return" element={<Returnpolicy />} />
-            <Route path="/contactus" element={<ContactUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
           </Routes>
         </main>
 

@@ -1,10 +1,14 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Container, Row, Col, Form, Card, Button } from "react-bootstrap";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import ProductCard from "../components/ProductCard.jsx";
 import { products, categories, brands } from "../data/products.js";
 
 const Shopping = () => {
+  //scrolling updation
+  useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, []);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedBrand, setSelectedBrand] = useState("All Brands");
