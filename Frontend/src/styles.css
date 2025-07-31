@@ -448,3 +448,20 @@ body {
 .input-group-text {
   transition: all 0.3s ease;
 }
+
+/* wishlist */
+
+  .heart-bubble {
+    position: absolute;
+    color: red;
+    animation: floatUp 0.6s ease-out forwards;
+    font-size: 1.5rem;
+    pointer-events: none;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-60px); }
+  }
