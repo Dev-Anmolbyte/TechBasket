@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaUser, FaEnvelope, FaLock, FaPhone } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
 
@@ -62,7 +63,7 @@ const Register = () => {
       const userData = {
         id: Date.now(),
         name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
+        email: formData.email,  
         phone: formData.phone,
         role: "customer",
       };

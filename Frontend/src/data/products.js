@@ -543,7 +543,7 @@ export const products = [
     name: "ASUS TUF Gaming B550-PLUS (Wi-Fi 6) ATX Motherboard",
     brand: "ASUS",
     category: "Motherboards",
-    price: 15999,
+    price: 300,
     image:
       "https://computermegamart.com/wp-content/uploads/2022/01/tuf-gaming-b550-plus-wifi-ii-image-main-600x600-1.webp",
     rating: 4.6,
@@ -568,7 +568,7 @@ export const products = [
     name: "ASUS ROG STRIX Z790-E GAMING WiFi ATX Motherboard",
     brand: "ASUS",
     category: "Motherboards",
-    price: 34999,
+    price: 449,
     image: "https://m.media-amazon.com/images/I/81rmOwyu6fL._SX522_.jpg",
     rating: 4.8,
     reviews: 310,
@@ -592,7 +592,7 @@ export const products = [
     name: "MSI MAG B660M MORTAR WiFi DDR4 Micro-ATX Motherboard",
     brand: "MSI",
     category: "Motherboards",
-    price: 13499,
+    price: 300,
     image:
       "https://m.media-amazon.com/images/I/41Ssb861-cL._SY300_SX300_QL70_FMwebp_.jpg",
     rating: 4.5,
@@ -617,7 +617,7 @@ export const products = [
     name: "Gigabyte B660M AORUS PRO AX DDR4 Micro-ATX Motherboard",
     brand: "Gigabyte",
     category: "Motherboards",
-    price: 13299,
+    price:299,
     image: "https://m.media-amazon.com/images/I/61-Ge9n3b9L._SX522_.jpg",
     rating: 4.6,
     reviews: 162,
@@ -644,7 +644,7 @@ export const products = [
     name: "ASUS ROG STRIX 750G 80 Plus Gold Fully Modular Power Supply – 750W",
     brand: "ASUS",
     category: "Power Supply",
-    price: 14499,
+    price: 399,
     image: "https://m.media-amazon.com/images/I/81pahkoLgtL._SX522_.jpg",
     rating: 4.7,
     reviews: 212,
@@ -666,7 +666,7 @@ export const products = [
     name: "MSI MAG A850GL PCIE5 80 Plus Gold ATX 3.0 PSU – 850W",
     brand: "MSI",
     category: "Power Supply",
-    price: 12999,
+    price: 599,
     image: "https://m.media-amazon.com/images/I/71rivSOwqnL._SX679_.jpg",
     rating: 4.6,
     reviews: 145,
@@ -688,7 +688,7 @@ export const products = [
     name: "Gigabyte P650B 80 Plus Bronze Power Supply – 650W",
     brand: "Gigabyte",
     category: "Power Supply",
-    price: 5199,
+    price: 459,
     image: "https://m.media-amazon.com/images/I/71m2so+l1-L._SX522_.jpg",
     rating: 4.4,
     reviews: 290,
@@ -710,7 +710,7 @@ export const products = [
     name: "Gigabyte UD1000GM PG5 80 Plus Gold Fully Modular Power Supply – 1000W",
     brand: "Gigabyte",
     category: "Power Supply",
-    price: 13999,
+    price: 599,
     image: "https://m.media-amazon.com/images/I/51tbY2vnH9L._SX522_.jpg",
     rating: 4.5,
     reviews: 132,
@@ -735,7 +735,7 @@ export const products = [
     name: "ASUS TUF Gaming GT501 Mid-Tower Case",
     brand: "ASUS",
     category: "Cabinet",
-    price: 11299,
+    price: 399,
     image:
       "https://m.media-amazon.com/images/I/411x4R6GIvL._SY300_SX300_QL70_FMwebp_.jpg",
     rating: 4.7,
@@ -758,7 +758,7 @@ export const products = [
     name: "MSI MPG GUNGNIR 110R Mid-Tower Cabinet",
     brand: "MSI",
     category: "Cabinet",
-    price: 8999,
+    price: 239,
     image:
       "https://m.media-amazon.com/images/I/41e7ayYv55L._SY300_SX300_QL70_FMwebp_.jpg",
     rating: 4.6,
@@ -781,7 +781,7 @@ export const products = [
     name: "Gigabyte C200 Glass ATX Mid Tower Case",
     brand: "Gigabyte",
     category: "Cabinet",
-    price: 4799,
+    price: 199,
     image: "https://m.media-amazon.com/images/I/51ZUJcQiXpL.jpg",
     rating: 4.4,
     reviews: 330,
@@ -803,7 +803,7 @@ export const products = [
     name: "Gigabyte AORUS C700 Glass Full Tower Case",
     brand: "Gigabyte",
     category: "Cabinet",
-    price: 18499,
+    price: 399,
     image:
       "https://www.gigabyte.com/FileUpload/Global/KeyFeature/1713/innergigabyteimages/kf-img.png",
     rating: 4.8,
@@ -823,6 +823,101 @@ export const products = [
   },
 
   //cabinet ending
+
+  //Liquid cooler starting
+  {
+  id: 37,
+  name: 'ASUS ROG Ryuo III 360 ARGB Liquid CPU Cooler',
+  brand: 'ASUS',
+  category: 'Cooling',
+  price: 399,
+  image: 'https://m.media-amazon.com/images/I/81s7wV9sSXL._SX522_.jpg',
+  rating: 4.8,
+  reviews: 245,
+  inStock: true,
+  description: 'Premium 360mm AIO liquid cooler with Asetek pump and Anime Matrix display.',
+  specifications: {
+    type: 'Liquid Cooler',
+    radiator: '360mm',
+    fan_speed: '2200 RPM',
+    noise_level: '29 dBA',
+    rgb: 'ARGB with Anime Matrix Display',
+    socket_support: 'Intel LGA1700/1200/115x, AMD AM5/AM4',
+    pump: 'Asetek 8th Gen',
+    warranty: '6 Years'
+  }
+},
+
+{
+  id: 38,
+  name: 'MSI MAG CoreLiquid C360 ARGB AIO Cooler',
+  brand: 'MSI',
+  category: 'Cooling',
+  price: 299,
+  image: 'https://m.media-amazon.com/images/I/61GfoOFsdKL._SX522_.jpg',
+  rating: 4.6,
+  reviews: 198,
+  inStock: true,
+  description: 'Efficient 360mm cooler with ARGB and split chamber pump design.',
+  specifications: {
+    type: 'Liquid Cooler',
+    radiator: '360mm',
+    fan_speed: '2500 RPM',
+    noise_level: '26 dBA',
+    rgb: 'ARGB',
+    socket_support: 'Intel LGA1700/1200/115x, AMD AM5/AM4',
+    pump: 'Integrated with Radiator',
+    warranty: '5 Years'
+  }
+},
+
+{
+  id: 39,
+  name: 'Gigabyte AORUS WATERFORCE X 360 AIO Cooler',
+  brand: 'Gigabyte',
+  category: 'Cooling',
+  price: 500,
+  image: 'https://m.media-amazon.com/images/I/51jfcbAHunL._SX679_.jpg',
+  rating: 4.7,
+  reviews: 187,
+  inStock: true,
+  description: 'High-performance liquid cooler with LCD display and adjustable fans.',
+  specifications: {
+    type: 'Liquid Cooler',
+    radiator: '360mm',
+    fan_speed: '2500 RPM',
+    noise_level: '22.3 dBA',
+    rgb: 'ARGB + LCD Display',
+    socket_support: 'Intel LGA1700/1200/115x, AMD AM5/AM4',
+    pump: 'Ceramic Axis Pump',
+    warranty: '5 Years'
+  }
+},
+
+{
+  id: 40,
+  name: 'MSI MEG CoreLiquid S280 Silent AIO Cooler',
+  brand: 'MSI',
+  category: 'Cooling',
+  price: 450,
+  image: 'https://m.media-amazon.com/images/I/71YlTOqU+IL._SX522_.jpg',
+  rating: 4.6,
+  reviews: 160,
+  inStock: true,
+  description: 'Silent S-series 280mm AIO with 2.4” IPS display and great cooling performance.',
+  specifications: {
+    type: 'Liquid Cooler',
+    radiator: '280mm',
+    fan_speed: '2000 RPM',
+    noise_level: '20 dBA',
+    rgb: 'Customizable Display, No RGB fans',
+    socket_support: 'Intel LGA1700/1200/115x, AMD AM5/AM4',
+    pump: 'Asetek 7th Gen',
+    warranty: '6 Years'
+  }
+}
+
+  //liquid cooler ending
 ];
 
 export const categories = [
@@ -832,7 +927,7 @@ export const categories = [
   "Memory",
   "Storage",
   "Motherboards",
-  "Power Supplies",
+  "Power Supply",
   "Cooling",
   "Cabinet",
   "Prepherals",
