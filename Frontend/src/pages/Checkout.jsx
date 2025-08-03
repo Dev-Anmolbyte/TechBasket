@@ -21,10 +21,12 @@ const Checkout = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const { cart, user, addOrder } = useAppContext();
+  const { cart, user, addOrder, loadingUser } = useAppContext();
   const navigate = useNavigate();
   const { state } = useLocation();
   const singleProduct = state?.product;
+
+  
 
   const [billingInfo, setBillingInfo] = useState({
     firstName: user?.name?.split(" ")[0] || "",
@@ -63,6 +65,23 @@ const Checkout = () => {
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + tax + shipping;
 
+
+  useEffect(() => {
+    if (!loadingUser && !user) {
+      // Save current path for after login
+      localStorage.setItem("redirectAfterLogin", "/checkout");
+      navigate("/login");
+    }
+  }, [loadingUser, user, navigate]);
+
+  if (loadingUser) {
+    return <p>Loading...</p>; // or a spinner
+  }
+
+  if (!user) {
+    return null; // no redirect until above useEffect runs
+  }
+  
   const handleBillingChange = (e) => {
     setBillingInfo({
       ...billingInfo,

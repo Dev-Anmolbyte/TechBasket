@@ -31,7 +31,7 @@ const ProductDetails = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, removeFromCart, cart } = useAppContext();
+  const { addToCart, removeFromCart, cart, user } = useAppContext();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("specifications");
 
@@ -165,11 +165,20 @@ const ProductDetails = () => {
                 size="lg"
                 className="rounded w-100"
                 disabled={!product.inStock}
-                onClick={() =>
-                  navigate("/checkout", {
-                    state: { product, quantity },
-                  })
-                }
+                onClick={() => {
+                  if (user) {
+                    navigate("/checkout", {
+                      state: { product, quantity },
+                    });
+                  } else {
+                    localStorage.setItem("redirectAfterLogin", "/checkout");
+                    localStorage.setItem(
+                      "checkoutData",
+                      JSON.stringify({ product, quantity })
+                    );
+                    navigate("/login");
+                  }
+                }}
               >
                 Buy Now
               </Button>
@@ -194,7 +203,6 @@ const ProductDetails = () => {
                   className="flex-fill rounded"
                 >
                   <FaHeart />
-                  
                 </Button>
                 <Button
                   variant="outline-secondary"

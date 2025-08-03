@@ -22,8 +22,8 @@ const Login = () => {
   });
 
   useEffect(() => {
-      window.scrollTo({ top: 50, behavior: "smooth" });
-    }, []);
+    window.scrollTo({ top: 50, behavior: "smooth" });
+  }, []);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -75,10 +75,20 @@ const Login = () => {
         throw new Error("Please fill in all fields");
       }
 
-      // 🔁 NEW: Handle post-login redirect
+      // Handle post-login redirect with checkout data
       const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
       localStorage.removeItem("redirectAfterLogin");
-      navigate(redirectPath);
+
+      if (redirectPath === "/checkout") {
+        const checkoutData = JSON.parse(
+          localStorage.getItem("checkoutData") || "{}"
+        );
+        localStorage.removeItem("checkoutData");
+
+        navigate("/checkout", { state: checkoutData });
+      } else {
+        navigate(redirectPath);
+      }
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {

@@ -5,14 +5,10 @@ import { FaShoppingCart, FaStar } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
 import { useNavigate } from "react-router-dom";
 
-
-
 const USD_TO_INR = 83.5;
 
 const ProductCard = ({ product }) => {
-
-  
-  const { addToCart,  cart, user } = useAppContext();
+  const { addToCart, cart, user } = useAppContext();
 
   const isInCart = cart.some((item) => item.id === product.id);
 
@@ -33,11 +29,20 @@ const ProductCard = ({ product }) => {
   const handleBuyNow = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
     if (!user) {
+      localStorage.setItem("redirectAfterLogin", "/checkout");
+
+      localStorage.setItem(
+        "checkoutData",
+        JSON.stringify({ product, quantity: 1 })
+      );
+
       navigate("/login");
-      return null;
+      return;
     }
-    navigate("/checkout", { state: { product } });
+
+    navigate("/checkout", { state: { product, quantity: 1 } });
   };
 
   return (
