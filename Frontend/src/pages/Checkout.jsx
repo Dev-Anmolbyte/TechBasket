@@ -13,6 +13,7 @@ import { FaCreditCard, FaLock, FaMapMarkerAlt, FaUser } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
 import { Link } from "react-router-dom";
 import "../styles.css";
+ import axios from "axios";
 
 const USD_TO_INR = 83.5;
 
@@ -55,12 +56,17 @@ const Checkout = () => {
 
   const items = singleProduct
     ? [{ ...singleProduct, quantity: passedQuantity }]
-    : cart;
+    : cart.map((item) => ({
+        ...item.productId,
+        quantity: item.quantity || 1,
+      }));
+
 
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
+
   const tax = subtotal * 0.08;
   const shipping = subtotal > 50 ? 0 : 9.99;
   const total = subtotal + tax + shipping;
@@ -96,63 +102,83 @@ const Checkout = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   setLoading(true);
+   setError("");
 
-    try {
-      const requiredFields = [
-        "firstName",
-        "lastName",
-        "email",
-        "address",
-        "city",
-        "state",
-        "zipCode",
-      ];
-      const missingFields = requiredFields.filter(
-        (field) => !billingInfo[field]
-      );
+   try {
+     const requiredFields = [
+       "firstName",
+       "lastName",
+       "email",
+       "address",
+       "city",
+       "state",
+       "zipCode",
+     ];
+     const missingFields = requiredFields.filter(
+       (field) => !billingInfo[field]
+     );
 
-      if (missingFields.length > 0) {
-        throw new Error("Please fill in all required shipping information");
-      }
+     if (missingFields.length > 0) {
+       throw new Error("Please fill in all required shipping information");
+     }
 
-      if (
-        !paymentInfo.cardNumber ||
-        !paymentInfo.expiryDate ||
-        !paymentInfo.cvv ||
-        !paymentInfo.nameOnCard
-      ) {
-        throw new Error("Please fill in all payment information");
-      }
+     if (
+       !paymentInfo.cardNumber ||
+       !paymentInfo.expiryDate ||
+       !paymentInfo.cvv ||
+       !paymentInfo.nameOnCard
+     ) {
+       throw new Error("Please fill in all payment information");
+     }
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const orderData = {
-        items,
-        billingInfo,
-        paymentInfo: {
-          ...paymentInfo,
-          cardNumber: "**** **** **** " + paymentInfo.cardNumber.slice(-4),
-        },
-        totals: {
-          subtotal,
-          tax,
-          shipping,
-          total,
-        },
-      };
+     // If single product from Buy Now
+     if (singleProduct) {
+       await axios.post(
+         "http://localhost:5000/api/checkout/initiate",
+         {
+           productId: singleProduct._id,
+           quantity: passedQuantity,
+           billingInfo, // ✅ send delivery info
+         },
+         {
+           headers: { Authorization: `Bearer ${user.token}` },
+         }
+       );
+     }
+     // If from cart (loop through cart items)
+     else {
+       for (const item of cart) {
+         await axios.post(
+           "http://localhost:5000/api/checkout/initiate",
+           {
+             productId: item.productId._id,
+             quantity: item.quantity,
+             billingInfo, // ✅ send delivery info
+           },
+           {
+             headers: { Authorization: `Bearer ${user.token}` },
+           }
+         );
+       }
+     }
 
-      addOrder(orderData);
-      navigate("/my-orders");
-    } catch (err) {
-      setError(err.message || "Order processing failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+     navigate("/my-orders");
+   } catch (err) {
+     setError(
+       err.response?.data?.message ||
+         err.message ||
+         "Order processing failed. Please try again."
+     );
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   if (!user) {
     navigate("/login");
@@ -182,6 +208,7 @@ const Checkout = () => {
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col lg={8}>
+           
             {/* Shipping Information */}
             <Card className="mb-4">
               <Card.Header className="d-flex align-items-center">
@@ -198,6 +225,8 @@ const Checkout = () => {
                         name="firstName"
                         value={billingInfo.firstName}
                         onChange={handleBillingChange}
+                        pattern="^[A-Za-z]+$"
+                        title="First name should contain only letters"
                         required
                       />
                     </Form.Group>
@@ -210,6 +239,8 @@ const Checkout = () => {
                         name="lastName"
                         value={billingInfo.lastName}
                         onChange={handleBillingChange}
+                        pattern="^[A-Za-z]+$"
+                        title="Last name should contain only letters"
                         required
                       />
                     </Form.Group>
@@ -231,12 +262,20 @@ const Checkout = () => {
                   </Col>
                   <Col md={6}>
                     <Form.Group className="mb-3">
-                      <Form.Label>Phone Number</Form.Label>
+                      <Form.Label>Phone Number *</Form.Label>
                       <Form.Control
                         type="tel"
                         name="phone"
                         value={billingInfo.phone}
-                        onChange={handleBillingChange}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 10) val = val.slice(0, 10);
+                          setBillingInfo({ ...billingInfo, phone: val });
+                        }}
+                        placeholder="10-digit mobile number"
+                        pattern="^\d{10}$"
+                        title="Phone number must be exactly 10 digits"
+                        required
                       />
                     </Form.Group>
                   </Col>
@@ -248,7 +287,12 @@ const Checkout = () => {
                     type="text"
                     name="address"
                     value={billingInfo.address}
-                    onChange={handleBillingChange}
+                    onChange={(e) =>
+                      setBillingInfo({
+                        ...billingInfo,
+                        address: e.target.value.trimStart(),
+                      })
+                    }
                     placeholder="123 Main St"
                     required
                   />
@@ -286,7 +330,14 @@ const Checkout = () => {
                         type="text"
                         name="zipCode"
                         value={billingInfo.zipCode}
-                        onChange={handleBillingChange}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, "");
+                          if (val.length > 6) val = val.slice(0, 6);
+                          setBillingInfo({ ...billingInfo, zipCode: val });
+                        }}
+                        placeholder="6-digit PIN code"
+                        pattern="^\d{6}$"
+                        title="ZIP code must be exactly 6 digits"
                         required
                       />
                     </Form.Group>
@@ -302,6 +353,7 @@ const Checkout = () => {
                 <h5 className="mb-0">Payment Information</h5>
               </Card.Header>
               <Card.Body>
+                {/* Name on Card */}
                 <Form.Group className="mb-3">
                   <Form.Label>Name on Card *</Form.Label>
                   <div className="input-group">
@@ -318,6 +370,7 @@ const Checkout = () => {
                   </div>
                 </Form.Group>
 
+                {/* Card Number */}
                 <Form.Group className="mb-3">
                   <Form.Label>Card Number *</Form.Label>
                   <div className="input-group">
@@ -328,15 +381,23 @@ const Checkout = () => {
                       type="text"
                       name="cardNumber"
                       value={paymentInfo.cardNumber}
-                      onChange={handlePaymentChange}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/\D/g, ""); // Only digits
+                        val = val.substring(0, 16); // Max 16 digits
+                        val = val.replace(/(.{4})/g, "$1 ").trim(); // Add space every 4 digits
+                        setPaymentInfo({ ...paymentInfo, cardNumber: val });
+                      }}
                       placeholder="1234 5678 9012 3456"
-                      maxLength="19"
                       required
                     />
                   </div>
+                  <small className="text-muted">
+                    We accept Visa, MasterCard, RuPay
+                  </small>
                 </Form.Group>
 
                 <Row>
+                  {/* Expiry Date */}
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>Expiry Date *</Form.Label>
@@ -344,13 +405,22 @@ const Checkout = () => {
                         type="text"
                         name="expiryDate"
                         value={paymentInfo.expiryDate}
-                        onChange={handlePaymentChange}
+                        onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, ""); // Only digits
+                          if (val.length >= 3)
+                            val = val.slice(0, 2) + "/" + val.slice(2);
+                          setPaymentInfo({
+                            ...paymentInfo,
+                            expiryDate: val.substring(0, 5),
+                          });
+                        }}
                         placeholder="MM/YY"
-                        maxLength="5"
                         required
                       />
                     </Form.Group>
                   </Col>
+
+                  {/* CVV */}
                   <Col md={6}>
                     <Form.Group className="mb-3">
                       <Form.Label>CVV *</Form.Label>
@@ -359,9 +429,14 @@ const Checkout = () => {
                           type="text"
                           name="cvv"
                           value={paymentInfo.cvv}
-                          onChange={handlePaymentChange}
+                          onChange={(e) => {
+                            let val = e.target.value.replace(/\D/g, ""); // Only digits
+                            setPaymentInfo({
+                              ...paymentInfo,
+                              cvv: val.substring(0, 4),
+                            });
+                          }}
                           placeholder="123"
-                          maxLength="4"
                           required
                         />
                         <span className="input-group-text">
@@ -395,14 +470,14 @@ const Checkout = () => {
                     <div key={item.id} className="order-item-container">
                       <div className="d-flex justify-content-between">
                         <div className="flex-grow-1">
-                          <div className="fw-semibold text-dark small">
+                          <div className="fw-semibold text-light small">
                             {item.name}
                           </div>
                           <div className="text-muted small">
                             Qty: {item.quantity}
                           </div>
                           <Link
-                            to={`/product/${item.id}`}
+                            to={`/product/${item._id}`}
                             className="order-item-link"
                             target="_blank"
                             rel="noopener noreferrer"

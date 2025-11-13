@@ -1,68 +1,169 @@
-import React from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { Card, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaStar } from "react-icons/fa";
 import { useAppContext } from "../App.jsx";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import gsap from "gsap";
 
-const USD_TO_INR = 83.5;
+// Global constant for currency conversion
+const USD_TO_INR_RATE = 83.5;
 
 const ProductCard = ({ product }) => {
-  const { addToCart, cart, user } = useAppContext();
-
-  const isInCart = cart.some((item) => item.id === product.id);
-
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product);
-  };
-
-  //scroll
-
-  const handleLinkClick = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
+  const { user, isInCart, fetchCartFromBackend } = useAppContext();
   const navigate = useNavigate();
+  const cardRef = useRef(null);
 
-  const handleBuyNow = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // Memoize event handlers to prevent unnecessary re-renders and potential memory leaks
+  const handleAddToCart = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-    if (!user) {
-      localStorage.setItem("redirectAfterLogin", "/checkout");
+      if (!user?.token) {
+        navigate("/login");
+        return;
+      }
 
-      localStorage.setItem(
-        "checkoutData",
-        JSON.stringify({ product, quantity: 1 })
-      );
+      try {
+        await axios.post(
+          "http://localhost:5000/api/cart",
+          { productId: product._id, quantity: 1 },
+          { headers: { Authorization: `Bearer ${user.token}` } }
+        );
 
-      navigate("/login");
-      return;
-    }
+        // Await the fetch to ensure cart state is updated before proceeding
+        await fetchCartFromBackend();
+        console.log(`Product "${product.name}" added to cart.`);
+      } catch (err) {
+        console.error(
+          "Failed to add item to cart:",
+          err.response?.data || err.message
+        );
+        // Implement user-friendly feedback here (e.g., a toast notification)
+      }
+    },
+    [user, product, navigate, fetchCartFromBackend]
+  );
 
-    navigate("/checkout", { state: { product, quantity: 1 } });
-  };
+  const handleBuyNow = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
+      if (!user?.token) {
+        // Store data in session storage instead of local storage for a cleaner approach
+        sessionStorage.setItem("redirectAfterLogin", "/checkout");
+        sessionStorage.setItem(
+          "checkoutData",
+          JSON.stringify({ product, quantity: 1 })
+        );
+        navigate("/login");
+        return;
+      }
+
+      try {
+        await axios.post(
+          "http://localhost:5000/api/checkout/initiate",
+          { productId: product._id, quantity: 1 },
+          { headers: { Authorization: `Bearer ${user.token}` } }
+        );
+
+        navigate("/checkout", { state: { product, quantity: 1 } });
+      } catch (err) {
+        console.error(
+          "Failed to initiate checkout:",
+          err.response?.data || err.message
+        );
+        // Implement user-friendly feedback here
+      }
+    },
+    [user, product, navigate]
+  );
+
+  const handleViewDetails = useCallback(() => {
+    // Scroll to the top of the page smoothly
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    // Use a single Timeline for better control over animations
+    const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    // Entry animation
+    timeline.fromTo(
+      card,
+      { y: 30, opacity: 0, scale: 0.95 },
+      { y: 0, opacity: 1, scale: 1, duration: 0.6 }
+    );
+
+    // Hover animation
+    const onEnter = () => {
+      gsap.to(card, {
+        scale: 1.03,
+        boxShadow: "0 0 20px rgba(0, 140, 255, 0.25)",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    };
+
+    const onLeave = () => {
+      gsap.to(card, {
+        scale: 1,
+        boxShadow: "none",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    };
+
+    card.addEventListener("mouseenter", onEnter);
+    card.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      // Clean up event listeners to prevent memory leaks
+      card.removeEventListener("mouseenter", onEnter);
+      card.removeEventListener("mouseleave", onLeave);
+    };
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  // Render the component with improved structure and styles
   return (
-    <Card className="h-100 shadow-sm border-0 rounded-4 overflow-hidden product-card">
-      <div className="bg-light text-center p-2">
-        <Card.Img
-          variant="top"
-          src={product.image}
-          style={{
-            height: "180px",
-            width: "100%",
-            objectFit: "cover",
-            borderRadius: "0.5rem",
-          }}
-        />
-      </div>
+    <Card
+      ref={cardRef}
+      className="h-100 shadow-sm border-0 rounded-4 overflow-hidden product-card"
+    >
+      <Link
+        to={`/product/${product._id}`}
+        onClick={handleViewDetails}
+        className="text-decoration-none"
+      >
+        <div className="bg-light text-center p-2">
+          <Card.Img
+            variant="top"
+            src={product.image}
+            alt={product.name}
+            style={{
+              height: "180px",
+              width: "100%",
+              objectFit: "cover",
+              borderRadius: "0.5rem",
+            }}
+          />
+        </div>
+      </Link>
       <Card.Body className="d-flex flex-column px-3 py-3">
-        <Card.Title className="h6 fw-semibold text-dark mb-1">
-          {product.name}
-        </Card.Title>
+        <Link
+          to={`/product/${product._id}`}
+          onClick={handleViewDetails}
+          className="text-decoration-none"
+        >
+          <Card.Title className="h6 fw-semibold text-white mb-1">
+            {product.name}
+          </Card.Title>
+        </Link>
         <Card.Text className="text-muted small mb-2">
           {product.brand} • {product.category}
         </Card.Text>
@@ -84,7 +185,7 @@ const ProductCard = ({ product }) => {
               ₹
               {new Intl.NumberFormat("en-IN", {
                 maximumFractionDigits: 0,
-              }).format(product.price * USD_TO_INR)}
+              }).format(product.price * USD_TO_INR_RATE)}
             </span>
             <span
               className={`badge ${
@@ -96,22 +197,8 @@ const ProductCard = ({ product }) => {
           </div>
 
           <div className="d-grid gap-2">
-            {/* Row with View Details and Add to Cart */}
             <div className="d-flex justify-content-between">
-              <Link
-                to={`/product/${product.id}`}
-                onClick={handleLinkClick}
-                className="me-2 flex-grow-1"
-              >
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  className="rounded-pill w-100"
-                >
-                  View Details
-                </Button>
-              </Link>
-              {isInCart ? (
+              {isInCart(product._id) ? (
                 <Button
                   variant="success"
                   size="sm"
@@ -130,8 +217,8 @@ const ProductCard = ({ product }) => {
                   variant="primary"
                   size="sm"
                   className="rounded-pill flex-grow-1"
-                  disabled={!product.inStock}
                   onClick={handleAddToCart}
+                  disabled={!product.inStock}
                 >
                   <FaShoppingCart className="me-2" />
                   Add to Cart

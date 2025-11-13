@@ -17,25 +17,33 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-    setLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setMessage("");
+  setLoading(true);
 
-    setTimeout(() => {
-      if (!email) {
-        setError("Please enter your email address.");
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
-        setError("Please enter a valid email address.");
-      } else {
-        setMessage(
-          "A password reset link has been sent to your email address."
-        );
-      }
-      setLoading(false);
-    }, 1500);
-  };
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Something went wrong");
+    }
+
+    setMessage(data.message);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Container className="py-5">

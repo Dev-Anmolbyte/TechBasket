@@ -1,4 +1,5 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect } from "react";
 import {
   Container,
   Row,
@@ -16,33 +17,98 @@ import {
   FaShoppingBag,
   FaArrowLeft,
 } from "react-icons/fa";
-import { useEffect } from "react";
 import { useAppContext } from "../App.jsx";
+import { useState } from "react";
+
+
 
 const USD_TO_INR = 83.5;
 
 const Cart = () => {
+  const {
+    cart,
+    updateCartQuantity,
+    removeFromCart,
+    updateCartFromServer,
+    user,
+  } = useAppContext();
+
+ const cartItemCount = cart.length;
+  const navigate = useNavigate();
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
 
-  const { cart, updateCartQuantity, removeFromCart, user } = useAppContext();
-  const navigate = useNavigate();
+    const fetchCart = async () => {
+      if (!user || !user.token) return;
 
-  const subtotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const tax = subtotal * 0.08; // 8% tax
-  const shipping = subtotal > 50 ? 0 : 9.99;
-  const total = subtotal + tax + shipping;
+      try {
+        const res = await axios.get("http://localhost:5000/api/cart", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
+        updateCartFromServer(res.data);
+        console.log("✅ Cart fetched:", res.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch cart:", error);
+      }
+    };
 
-  const handleQuantityChange = (productId, newQuantity) => {
-    updateCartQuantity(productId, newQuantity);
+    fetchCart();
+  }, [user]);
+
+  const handleQuantityChange = async (productId, newQuantity) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/cart/${productId}`,
+        { quantity: newQuantity },
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+
+      const res = await axios.get("http://localhost:5000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      updateCartFromServer(res.data);
+
+      console.log(
+        `✅ Quantity updated and cart refreshed for productId ${productId}:`,
+        newQuantity
+      );
+    } catch (error) {
+      console.error("❌ Failed to update quantity:", error);
+    }
   };
 
-  const handleRemoveItem = (productId) => {
-    removeFromCart(productId);
+  const handleRemoveItem = async (productId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/cart/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+
+      // ✅ Re-fetch updated cart from server
+      const res = await axios.get("http://localhost:5000/api/cart", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      updateCartFromServer(res.data);
+
+      console.log(`✅ Item removed and cart refreshed: productId ${productId}`);
+    } catch (error) {
+      console.error("❌ Failed to remove item:", error);
+    }
   };
 
   const handleCheckout = () => {
@@ -51,10 +117,34 @@ const Cart = () => {
       navigate("/login");
       return;
     }
-    navigate("/checkout");
+
+    setCheckingOut(true);
+    let timeLeft = 3;
+
+    const countdownInterval = setInterval(() => {
+      timeLeft -= 1;
+      setCountdown(timeLeft);
+
+      if (timeLeft === 0) {
+        clearInterval(countdownInterval);
+        navigate("/checkout");
+      }
+    }, 1000);
   };
 
-  if (cart.length === 0) {
+  const cartItems = Array.isArray(cart) ? cart : [];
+
+  const subtotal = cartItems.reduce((total, item) => {
+    const price = item?.productId?.price ?? 0;
+    const qty = item?.quantity ?? 0;
+    return total + price * qty;
+  }, 0);
+
+  const tax = subtotal * 0.08;
+  const shipping = subtotal > 50 ? 0 : 9.99;
+  const total = subtotal + tax + shipping;
+
+  if (cartItems.length === 0) {
     return (
       <Container className="py-5">
         <Row className="justify-content-center text-center">
@@ -87,22 +177,23 @@ const Cart = () => {
             <FaArrowLeft />
             Continue Shopping
           </Button>
-          <h1>Shopping Cart ({cart.length} items)</h1>
+          <h1>Shopping Cart ({cartItems.length} items)</h1>
         </Col>
       </Row>
 
       <Row>
-        {/* Cart Items */}
         <Col lg={8}>
-          {cart.map((item) => (
-            <Card key={item.id} className="mb-3 shadow-sm border-0 rounded-4">
+          {cartItems.map((item) => (
+            <Card
+              key={item.productId._id + item.quantity}
+              className="mb-3 shadow-sm border-0 rounded-4"
+            >
               <Card.Body>
                 <Row className="align-items-center">
-                  {/* Product Image */}
                   <Col md={2} className="text-center">
                     <img
-                      src={item.image}
-                      alt={item.name}
+                      src={item.productId?.image}
+                      alt={item.productId?.name}
                       className="img-fluid rounded"
                       style={{
                         height: "80px",
@@ -112,13 +203,12 @@ const Cart = () => {
                     />
                   </Col>
 
-                  {/* Product Details */}
                   <Col md={4}>
-                    <h6 className="mb-1 fw-semibold">{item.name}</h6>
+                    <h6 className="mb-1 fw-semibold">{item.productId?.name}</h6>
                     <p className="text-muted small mb-1">
-                      {item.brand} • {item.category}
+                      {item.productId?.brand} • {item.productId?.category}
                     </p>
-                    {!item.inStock && (
+                    {!item.productId?.inStock && (
                       <Alert
                         variant="warning"
                         className="py-1 px-2 mt-1 mb-0 small"
@@ -128,14 +218,16 @@ const Cart = () => {
                     )}
                   </Col>
 
-                  {/* Quantity Controls */}
                   <Col md={3}>
                     <div className="d-flex align-items-center justify-content-start">
                       <Button
                         variant="outline-secondary"
                         size="sm"
                         onClick={() =>
-                          handleQuantityChange(item.id, item.quantity - 1)
+                          handleQuantityChange(
+                            item.productId._id,
+                            item.quantity - 1
+                          )
                         }
                         disabled={item.quantity <= 1}
                       >
@@ -147,7 +239,7 @@ const Cart = () => {
                         value={item.quantity}
                         onChange={(e) =>
                           handleQuantityChange(
-                            item.id,
+                            item.productId._id,
                             parseInt(e.target.value) || 1
                           )
                         }
@@ -158,7 +250,10 @@ const Cart = () => {
                         variant="outline-secondary"
                         size="sm"
                         onClick={() =>
-                          handleQuantityChange(item.id, item.quantity + 1)
+                          handleQuantityChange(
+                            item.productId._id,
+                            item.quantity + 1
+                          )
                         }
                       >
                         <FaPlus />
@@ -166,29 +261,29 @@ const Cart = () => {
                     </div>
                   </Col>
 
-                  {/* Price Display */}
                   <Col md={2} className="text-center">
                     <div className="fw-bold text-primary">
                       ₹{" "}
                       {Math.round(
-                        item.price * item.quantity * USD_TO_INR
+                        (item.productId?.price ?? 0) *
+                          item.quantity *
+                          USD_TO_INR
                       ).toLocaleString("en-IN")}
                     </div>
                     <div className="small text-muted">
                       ₹{" "}
-                      {Math.round(item.price * USD_TO_INR).toLocaleString(
-                        "en-IN"
-                      )}{" "}
+                      {Math.round(
+                        (item.productId?.price ?? 0) * USD_TO_INR
+                      ).toLocaleString("en-IN")}{" "}
                       each
                     </div>
                   </Col>
 
-                  {/* Delete */}
                   <Col md={1} className="text-end">
                     <Button
                       variant="outline-danger"
                       size="sm"
-                      onClick={() => handleRemoveItem(item.id)}
+                      onClick={() => handleRemoveItem(item.productId._id)}
                     >
                       <FaTrash />
                     </Button>
@@ -199,7 +294,6 @@ const Cart = () => {
           ))}
         </Col>
 
-        {/* Order Summary */}
         <Col lg={4}>
           <Card
             className="cart-summary position-sticky"
@@ -210,7 +304,7 @@ const Cart = () => {
             </Card.Header>
             <Card.Body>
               <div className="d-flex justify-content-between mb-2">
-                <span>Subtotal ({cart.length} items):</span>
+                <span>Subtotal ({cartItems.length} items):</span>
                 <span>
                   {new Intl.NumberFormat("en-IN", {
                     style: "currency",
@@ -235,12 +329,11 @@ const Cart = () => {
                   {shipping === 0 ? (
                     <span className="text-success">FREE</span>
                   ) : (
-                    `
-  ${new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(shipping * USD_TO_INR)}`
+                    new Intl.NumberFormat("en-IN", {
+                      style: "currency",
+                      currency: "INR",
+                      maximumFractionDigits: 0,
+                    }).format(shipping * USD_TO_INR)
                   )}
                 </span>
               </div>
@@ -276,11 +369,25 @@ const Cart = () => {
                 className="btn-animated-primary w-100 mb-3"
                 size="lg"
                 onClick={handleCheckout}
+                disabled={checkingOut}
               >
-                {user ? "Proceed to Checkout" : "Login to Checkout"}
+                {checkingOut ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    />
+                    Redirecting in {countdown}...
+                  </>
+                ) : user ? (
+                  "Proceed to Checkout"
+                ) : (
+                  "Login to Checkout"
+                )}
               </Button>
+
               <Button
-                className="btn-continue-shopping w-100"
+                className="btn-animated-primary w-100"
                 as={Link}
                 to="/shopping"
               >
@@ -289,7 +396,6 @@ const Cart = () => {
             </Card.Body>
           </Card>
 
-          {/* Security Info */}
           <Card className="mt-3 border-success">
             <Card.Body className="text-center py-3">
               <h6 className="text-success mb-2">Secure Checkout</h6>

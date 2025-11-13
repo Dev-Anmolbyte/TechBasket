@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
@@ -10,35 +10,84 @@ import {
   FaPhone,
   FaMapMarkerAlt,
 } from "react-icons/fa";
+import gsap from "gsap";
 
 const Footer = () => {
+  const colRefs = useRef([]);
+  const iconRefs = useRef([]);
+
+  useEffect(() => {
+    colRefs.current.forEach((col, i) => {
+      if (!col) return;
+      gsap.fromTo(
+        col,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, delay: i * 0.2, ease: "power3.out" }
+      );
+    });
+
+    iconRefs.current.forEach((icon, i) => {
+      if (!icon) return;
+      gsap.to(icon, {
+        y: -4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        duration: 1 + i * 0.2,
+      });
+      gsap.set(icon, {
+        transition: "transform 0.3s ease, filter 0.3s ease",
+      });
+    });
+  }, []);
+
   return (
     <footer className="bg-dark text-light py-5 mt-5">
       <Container>
         <Row>
-          <Col md={3} className="mb-4">
+          <Col md={3} className="mb-4" ref={(el) => (colRefs.current[0] = el)}>
             <h5 className="fw-bold mb-3">TechBasket</h5>
             <p className="small">
               Your trusted partner for premium PC components. Quality hardware
               for enthusiasts, gamers, and professionals.
             </p>
             <div className="social-icons d-flex gap-3">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                <FaFacebook size={24} color="#1877F2" /> {/* Facebook Blue */}
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                ref={(el) => (iconRefs.current[0] = el)}
+              >
+                <FaFacebook size={24} color="#1877F2" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer">
-                <FaTwitter size={24} color="#1DA1F2" /> {/* Twitter Blue */}
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                ref={(el) => (iconRefs.current[1] = el)}
+              >
+                <FaTwitter size={24} color="#1DA1F2" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
-                <FaInstagram size={24} color="#E1306C" /> {/* Instagram Pink */}
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                ref={(el) => (iconRefs.current[2] = el)}
+              >
+                <FaInstagram size={24} color="#E1306C" />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer">
-                <FaLinkedin size={24} color="#0A66C2" /> {/* LinkedIn Blue */}
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                ref={(el) => (iconRefs.current[3] = el)}
+              >
+                <FaLinkedin size={24} color="#0A66C2" />
               </a>
             </div>
           </Col>
 
-          <Col md={3} className="mb-4">
+          <Col md={3} className="mb-4" ref={(el) => (colRefs.current[1] = el)}>
             <h6 className="fw-bold mb-3">Quick Links</h6>
             <ul className="list-unstyled">
               <li>
@@ -67,7 +116,7 @@ const Footer = () => {
             </ul>
           </Col>
 
-          <Col md={3} className="mb-4">
+          <Col md={3} className="mb-4" ref={(el) => (colRefs.current[2] = el)}>
             <h6 className="fw-bold mb-3">Categories</h6>
             <ul className="list-unstyled">
               <li>
@@ -93,7 +142,7 @@ const Footer = () => {
             </ul>
           </Col>
 
-          <Col md={3} className="mb-4">
+          <Col md={3} className="mb-4" ref={(el) => (colRefs.current[3] = el)}>
             <h6 className="fw-bold mb-3">Contact Us</h6>
             <div className="small">
               <div className="mb-2">

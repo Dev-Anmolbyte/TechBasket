@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Container,
   Row,
@@ -23,15 +23,21 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../App.jsx";
-import { products as initialProducts } from "../data/products.js";
+import axios from "axios";
 
-const USD_TO_INR = 83.5;
+const USD_TO_INR = 87.7;
+const API_BASE_URL = "http://localhost:5000/api/admin";
 
 const AdminDashboard = () => {
-  const { user, orders } = useAppContext();
+  const { user, setUser } = useAppContext(); // if you have setUser for logout, else ignore
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [showProductModal, setShowProductModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productForm, setProductForm] = useState({
@@ -45,96 +51,164 @@ const AdminDashboard = () => {
     inStock: true,
   });
 
-  // Check admin access
-  if (!user || user.role !== "admin") {
-    return (
-      <Container className="py-5 text-center">
-        <h2>Access Denied</h2>
-        <p>You need administrator privileges to access this page.</p>
-        <Button variant="primary" onClick={() => navigate("/")}>
-          Go Home
-        </Button>
-      </Container>
-    );
-  }
+  const calculateOrderTotal = (order) => {
+    return (order.items || []).reduce((sum, item) => {
+      const price = Number(item.price) || Number(item.product?.price) || 0;
+      return sum + price * Number(item.quantity || 0);
+    }, 0);
+  };
 
-  // Calculate stats
+  const tax = calculateOrderTotal * 0.08;
+  const shipping = calculateOrderTotal > 50 ? 0 : 9.99;
+
+  // Build axios config with Authorization header if token exists
+  const makeConfig = useCallback(() => {
+    const token = user?.token || localStorage.getItem("token");
+    return {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    };
+  }, [user]);
+
+  // Generic 401 handler
+  const handleAuthError = (err) => {
+    if (err?.response?.status === 401) {
+      // optional: clear localStorage and context user
+      localStorage.removeItem("token");
+      if (typeof setUser === "function") setUser(null);
+      navigate("/login");
+    }
+  };
+
+  // Single fetch function for all admin data (uses auth header)
+  const fetchAdminData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const config = makeConfig();
+      const [productsRes, ordersRes, usersRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/products`, config),
+        axios.get(`${API_BASE_URL}/orders`, config),
+        axios.get(`${API_BASE_URL}/users`, config),
+      ]);
+      setProducts(productsRes.data || []);
+      setOrders(ordersRes.data || []);
+      setCustomers(usersRes.data || []);
+    } catch (err) {
+      console.error("Failed to fetch admin data:", err);
+      handleAuthError(err);
+      setError(
+        err?.response?.data?.message ||
+          "Failed to fetch data from the backend. Please check your network and try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [makeConfig, navigate]);
+
+  // Run on mount if user is admin; otherwise redirect to login
+  useEffect(() => {
+    if (!user) {
+      // If no user in context try token in localStorage (optional flow)
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+    }
+
+    if (user && user.role !== "admin") {
+      // Not admin -> redirect
+      navigate("/");
+      return;
+    }
+
+    // fetch admin data
+    fetchAdminData();
+  }, [user, fetchAdminData, navigate]);
+
+  // Derived stats
   const totalRevenue = orders.reduce((total, order) => {
-    const orderTotal =
-      order.totals?.total ||
-      order.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    return total + orderTotal;
+    return total + calculateOrderTotal(order);
   }, 0);
 
-  const totalCustomers = new Set(
-    orders.map((order) => order.userId || order.id)
-  ).size;
+  const totalCustomers = customers.length;
   const totalOrders = orders.length;
   const totalProducts = products.length;
 
-  const handleProductSubmit = (e) => {
+  // Create or update product
+  const handleProductSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    try {
+      const config = makeConfig();
+      const payload = { ...productForm, price: parseFloat(productForm.price) };
 
-    if (editingProduct) {
-      setProducts(
-        products.map((p) =>
-          p.id === editingProduct.id
-            ? {
-                ...editingProduct,
-                ...productForm,
-                price: parseFloat(productForm.price),
-              }
-            : p
-        )
+      if (editingProduct && (editingProduct._id || editingProduct.id)) {
+        const id = editingProduct._id || editingProduct.id;
+        await axios.put(`${API_BASE_URL}/products/${id}`, payload, config);
+      } else {
+        await axios.post(`${API_BASE_URL}/products`, payload, config);
+      }
+
+      // refresh products
+      await fetchAdminData();
+      setShowProductModal(false);
+      setEditingProduct(null);
+      setProductForm({
+        name: "",
+        brand: "",
+        category: "",
+        price: "",
+        description: "",
+        image:
+          "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop",
+        inStock: true,
+      });
+    } catch (err) {
+      console.error("Failed to save product:", err);
+      handleAuthError(err);
+      setError(
+        err?.response?.data?.message || "Failed to save product. Try again."
       );
-    } else {
-      const newProduct = {
-        id: Math.max(...products.map((p) => p.id)) + 1,
-        ...productForm,
-        price: parseFloat(productForm.price),
-        rating: 5,
-        reviews: 0,
-        specifications: {},
-      };
-      setProducts([...products, newProduct]);
     }
-
-    setShowProductModal(false);
-    setEditingProduct(null);
-    setProductForm({
-      name: "",
-      brand: "",
-      category: "",
-      price: "",
-      description: "",
-      image:
-        "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop",
-      inStock: true,
-    });
   };
 
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setProductForm({
-      name: product.name,
-      brand: product.brand,
-      category: product.category,
-      price: product.price.toString(),
-      description: product.description,
-      image: product.image,
-      inStock: product.inStock,
+      name: product.name || "",
+      brand: product.brand || "",
+      category: product.category || "",
+      price: (product.price ?? "").toString(),
+      description: product.description || "",
+      image: product.image || "",
+      inStock: !!product.inStock,
     });
     setShowProductModal(true);
   };
 
-  const handleDeleteProduct = (productId) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter((p) => p.id !== productId));
+  const handleDeleteProduct = async (productIdOrObj) => {
+    const id = productIdOrObj._id || productIdOrObj.id || productIdOrObj;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
+    try {
+      const config = makeConfig();
+      await axios.delete(`${API_BASE_URL}/products/${id}`, config);
+      // remove locally for quick UI update
+      setProducts((prev) => prev.filter((p) => (p._id || p.id) !== id));
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+      handleAuthError(err);
+      setError(
+        err?.response?.data?.message || "Failed to delete product. Try again."
+      );
     }
   };
 
   const getOrderStatusColor = (status) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "pending":
         return "warning";
       case "processing":
@@ -150,6 +224,22 @@ const AdminDashboard = () => {
     }
   };
 
+  if (loading) {
+    return <Container className="py-5 text-center">Loading...</Container>;
+  }
+
+  if (error) {
+    return (
+      <Container className="py-5">
+        <Alert variant="danger">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!user || user.role !== "admin") {
+    return null;
+  }
+
   return (
     <Container fluid className="my-admin py-4">
       <Row className="mb-4">
@@ -159,7 +249,6 @@ const AdminDashboard = () => {
         </Col>
       </Row>
 
-      {/* Stats Cards */}
       <Row className="mb-4">
         <Col md={3}>
           <Card className="text-center admin-stat-card bg-gradient-revenue">
@@ -205,7 +294,6 @@ const AdminDashboard = () => {
         </Col>
       </Row>
 
-      {/* Main Content Tabs */}
       <Tabs defaultActiveKey="orders" className="mb-3">
         <Tab eventKey="orders" title="Orders">
           <Card>
@@ -227,55 +315,59 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.slice(0, 10).map((order) => {
-                      const orderTotal =
-                        order.totals?.total ||
-                        order.items.reduce(
-                          (sum, item) => sum + item.price * item.quantity,
-                          0
-                        );
+                    {orders.map((order) => (
+                      <tr key={order._id || order.id}>
+                        <td>#{order._id || order.id}</td>
+                        <td>
+                          {order.user?.name || order.customerName || "Customer"}
+                        </td>
 
-                      return (
-                        <tr key={order.id}>
-                          <td>#{order.id}</td>
-                          <td>
-                            {order.billingInfo
-                              ? `${order.billingInfo.firstName} ${order.billingInfo.lastName}`
-                              : "Customer"}
-                          </td>
-                          <td>
-                            {new Date(order.orderDate).toLocaleDateString()}
-                          </td>
-                          <td>{order.items.length}</td>
-                          <td className="fw-bold">
-                            {new Intl.NumberFormat("en-IN", {
-                              style: "currency",
-                              currency: "INR",
-                              maximumFractionDigits: 0,
-                            }).format(orderTotal * USD_TO_INR)}
-                          </td>
-                          <td>
-                            <span
-                              className={`badge bg-${getOrderStatusColor(
-                                order.status
-                              )}`}
-                            >
-                              {order.status.charAt(0).toUpperCase() +
-                                order.status.slice(1)}
-                            </span>
-                          </td>
-                          <td>
-                            <Button
-                              variant="primary"
-                              size="sm"
-                              className="btn-view"
-                            >
-                              View Details
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                        <td>
+                          {order.orderDate
+                            ? new Date(order.orderDate).toLocaleDateString(
+                                "en-GB"
+                              )
+                            : "-"}
+                        </td>
+
+                        <td>{order.items?.length || 0}</td>
+
+                        <td className="fw-bold">
+                          {new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                            maximumFractionDigits: 0,
+                          }).format(
+                            (calculateOrderTotal(order) +
+                              calculateOrderTotal(order) * 0.08 +
+                              (calculateOrderTotal(order) > 50 ? 0 : 9.99)) *
+                              USD_TO_INR
+                          )}
+                        </td>
+
+                        <td>
+                          <span
+                            className={`badge bg-${getOrderStatusColor(
+                              order.status
+                            )}`}
+                          >
+                            {order.status
+                              ? order.status.charAt(0).toUpperCase() +
+                                order.status.slice(1)
+                              : "Unknown"}
+                          </span>
+                        </td>
+                        <td>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="btn-view"
+                          >
+                            View Details
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               ) : (
@@ -314,12 +406,13 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody>
                   {products.map((product) => (
-                    <tr key={product.id}>
+                    <tr key={product._id || product.id}>
                       <td>
                         <img
                           src={product.image}
                           alt={product.name}
                           className="product-thumb"
+                          style={{ width: 80, height: 60, objectFit: "cover" }}
                         />
                       </td>
                       <td>{product.name}</td>
@@ -330,12 +423,12 @@ const AdminDashboard = () => {
                           style: "currency",
                           currency: "INR",
                           maximumFractionDigits: 0,
-                        }).format(product.price * USD_TO_INR)}
+                        }).format((product.price || 0) * USD_TO_INR)}
                       </td>
                       <td>
                         <span
                           className={`badge ${
-                            product.inStock ? "badge-success" : "badge-danger"
+                            product.inStock ? "bg-success" : "bg-danger"
                           }`}
                         >
                           {product.inStock ? "In Stock" : "Out of Stock"}
@@ -354,7 +447,7 @@ const AdminDashboard = () => {
                           variant="outline-danger"
                           size="sm"
                           className="table-action-btn"
-                          onClick={() => handleDeleteProduct(product.id)}
+                          onClick={() => handleDeleteProduct(product)}
                         >
                           <FaTrash />
                         </Button>
@@ -368,10 +461,22 @@ const AdminDashboard = () => {
         </Tab>
       </Tabs>
 
-      {/* Product Modal */}
       <Modal
         show={showProductModal}
-        onHide={() => setShowProductModal(false)}
+        onHide={() => {
+          setShowProductModal(false);
+          setEditingProduct(null);
+          setProductForm({
+            name: "",
+            brand: "",
+            category: "",
+            price: "",
+            description: "",
+            image:
+              "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&h=300&fit=crop",
+            inStock: true,
+          });
+        }}
         size="lg"
       >
         <Form onSubmit={handleProductSubmit}>
@@ -381,6 +486,7 @@ const AdminDashboard = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            {error && <Alert variant="danger">{error}</Alert>}
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
@@ -491,7 +597,10 @@ const AdminDashboard = () => {
           <Modal.Footer>
             <Button
               variant="secondary"
-              onClick={() => setShowProductModal(false)}
+              onClick={() => {
+                setShowProductModal(false);
+                setEditingProduct(null);
+              }}
             >
               Cancel
             </Button>
